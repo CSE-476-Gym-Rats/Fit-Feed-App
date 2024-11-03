@@ -16,21 +16,25 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.example.fitfeed.CameraActivity;
-import com.example.fitfeed.FriendsActivity;
-import com.example.fitfeed.R;
+import com.example.fitfeed.activities.CameraActivity;
+import com.example.fitfeed.activities.FriendsActivity;
+import com.example.fitfeed.models.Post;
+import com.example.fitfeed.models.Workout;
+import com.example.fitfeed.util.FileManager;
 import com.example.fitfeed.adapters.PostsRecyclerViewAdapter;
-import com.example.fitfeed.common.Post;
+import com.example.fitfeed.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link SocialFragment#newInstance} factory method to
+ * Use the {@link FeedFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SocialFragment extends Fragment {
+public class FeedFragment extends Fragment {
 
     public static final String ARG_PARAM1 = "posts";
     public static final int SOCIAL_NEW_POST_REQUEST_CODE = 32;
@@ -40,31 +44,31 @@ public class SocialFragment extends Fragment {
     private RecyclerView recyclerView;
     private ArrayList<Post> posts;
 
-    public SocialFragment() {}
+    public FeedFragment() {}
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param posts The list of posts to display in the feed.
-     * @return A new instance of fragment SocialFragment.
+     * @return A new instance of fragment FeedFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SocialFragment newInstance(ArrayList<Post> posts) {
-        SocialFragment fragment = new SocialFragment();
+    public static FeedFragment newInstance(ArrayList<Post> posts) {
+        FeedFragment fragment = new FeedFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList(ARG_PARAM1, posts);
         fragment.setArguments(args);
         return fragment;
     }
 
-    /** @noinspection deprecation*/
+    /** @noinspection deprecation */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             ArrayList<Post> postsReceived = getArguments().getParcelableArrayList(ARG_PARAM1);
-            //Log.d("SocialFragment.onCreate", String.format("Received %d posts", (postsReceived != null) ? postsReceived.size() : 0));
+            //Log.d("FeedFragment.onCreate", String.format("Received %d posts", (postsReceived != null) ? postsReceived.size() : 0));
             posts = (postsReceived != null) ? postsReceived : new ArrayList<>();
         } else {
             if (posts == null) {
@@ -125,11 +129,11 @@ public class SocialFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_social, container, false);
+        return inflater.inflate(R.layout.fragment_feed, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // TODO implement actual posts instead of placeholder values
@@ -151,6 +155,24 @@ public class SocialFragment extends Fragment {
             recyclerView.setLayoutManager(postsLayoutManager);
             recyclerView.setAdapter(postsRecyclerViewAdapter);
             recyclerView.setSaveEnabled(true);
+        }
+
+        loadPosts(); //todo
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadPosts();
+    }
+
+    private void loadPosts() {
+        try {
+            List<Workout> workouts = FileManager.loadWorkouts(getContext());
+            PostsRecyclerViewAdapter adapter = new PostsRecyclerViewAdapter(getContext(), posts);
+            recyclerView.setAdapter(adapter);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error loading posts.", Toast.LENGTH_SHORT).show();
         }
     }
 }

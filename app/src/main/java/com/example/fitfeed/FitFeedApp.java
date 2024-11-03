@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.fitfeed.activities.MainActivity;
+
 public class FitFeedApp extends Application {
     private static FitFeedApp instance;
 

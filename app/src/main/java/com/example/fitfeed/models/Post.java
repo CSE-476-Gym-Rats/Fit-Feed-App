@@ -1,11 +1,8 @@
-package com.example.fitfeed.common;
+package com.example.fitfeed.models;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,9 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.fitfeed.FitFeedApp;
+import com.example.fitfeed.util.GsonHelper;
+import com.google.gson.Gson;
 
 import java.io.File;
-import java.util.UUID;
 
 /**
  * Class that stores data representing a post.
@@ -25,6 +23,7 @@ public class Post implements Parcelable {
     private String postText;
     private String postUser;
     private String postFilename;
+    private Workout postWorkout;
     //private UUID postUserID;
     private transient Drawable postDrawable;
 
@@ -34,7 +33,7 @@ public class Post implements Parcelable {
      * @param postUser {@link String} representing the username of the user associated with the post.
      */
     public Post(String postText, String postUser) {
-        this(postText, postUser, null);
+        this(postText, postUser, null, null);
     }
 
     /**
@@ -43,17 +42,20 @@ public class Post implements Parcelable {
      * @param postText {@link String} representing the body text of the post.
      * @param postUser {@link String} representing the username of the user associated with the post.
      * @param postFilename {@link String} filename of the image or resource for the post.
+     * @param postWorkout {@link Workout} object associated with the post.
      */
-    public Post(String postText, String postUser, String postFilename) {
+    public Post(String postText, String postUser, String postFilename, Workout postWorkout) {
         this.postText = postText;
         this.postUser = postUser;
         this.setPostFilename(postFilename);
+        this.postWorkout = postWorkout;
     }
 
     protected Post(Parcel in) {
         this.postText = in.readString();
         this.postUser = in.readString();
         this.setPostFilename(in.readString());
+        this.postWorkout = GsonHelper.getGson().fromJson(in.readString(), Workout.class);
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -82,6 +84,10 @@ public class Post implements Parcelable {
 
     public String getPostUser() {
         return postUser;
+    }
+
+    public Workout getPostWorkout() {
+        return postWorkout;
     }
 
     /**
@@ -123,6 +129,10 @@ public class Post implements Parcelable {
         this.postUser = postUser;
     }
 
+    public void setPostWorkout(Workout postWorkout) {
+        this.postWorkout = postWorkout;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -134,5 +144,6 @@ public class Post implements Parcelable {
         dest.writeString(this.postText);
         dest.writeString(this.postUser);
         dest.writeString(this.postFilename);
+        dest.writeString(GsonHelper.getGson().toJson(this.postWorkout));
     }
 }

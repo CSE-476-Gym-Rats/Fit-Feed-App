@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/editExerciseName"
+        android:textColorHint="@color/navy"
+        android:textColor="@color/dark_navy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:hint="@string/exercise_placeholder"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editSets"
+        android:textColorHint="@color/navy"
+        android:textColor="@color/dark_navy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="@string/sets_placeholder"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/editReps"
+        android:textColorHint="@color/navy"
+        android:textColor="@color/dark_navy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="@string/reps_placeholder"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/editWeight"
+        android:textColorHint="@color/navy"
+        android:textColor="@color/dark_navy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="@string/weight_placeholder"
+        android:inputType="numberDecimal" />
+</LinearLayout>

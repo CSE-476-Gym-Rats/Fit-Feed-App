@@ -1,9 +1,8 @@
-package com.example.fitfeed;
+package com.example.fitfeed.activities;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.camera2.CameraAccessException;
@@ -27,8 +26,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.fitfeed.common.Post;
-import com.example.fitfeed.fragments.SocialFragment;
+import com.example.fitfeed.R;
+import com.example.fitfeed.models.Post;
+import com.example.fitfeed.fragments.FeedFragment;
 
 import java.io.File;
 import java.io.IOException;
@@ -128,11 +128,11 @@ public class CameraActivity extends AppCompatActivity {
      * @param view context of click event.
      */
     private void savePost(View view) {
-        Intent postIntent = new Intent(view.getContext(), SocialFragment.class);
+        Intent postIntent = new Intent(view.getContext(), FeedFragment.class);
         EditText editText = findViewById(R.id.cameraActivityEditText);
         String filename = ((Integer) imageView.getTag() != R.drawable.ic_launcher_foreground) ? imageFile.getAbsolutePath() : null;
 
-        postIntent.putExtra("post", new Post(editText.getText().toString(), "holtster2000", filename));
+        postIntent.putExtra("post", new Post(editText.getText().toString(), "holtster2000", filename, null));
 
         setResult(CameraActivity.RESULT_OK, postIntent);
         finish();

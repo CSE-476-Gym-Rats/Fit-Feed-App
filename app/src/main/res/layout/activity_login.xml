@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_blue"
-    tools:context=".LoginActivity">
+    tools:context=".activities.LoginActivity">
 
     <TextView
         android:id="@+id/textView6"
@@ -17,7 +17,7 @@
         android:text="@string/app_name"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="@color/navy"
+        android:textColor="@color/dark_navy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,13 +29,14 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="50dp"
-        android:backgroundTint="@color/navy"
+        android:backgroundTint="@color/dark_navy"
+        android:textColorHint="@color/navy"
         android:ems="10"
         android:hint="@string/username_label"
         android:inputType="text"
         android:maxWidth="488dp"
         android:minHeight="48dp"
-        android:textColor="@color/navy"
+        android:textColor="@color/dark_navy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/textView6"
@@ -48,13 +49,14 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="50dp"
-        android:backgroundTint="@color/navy"
+        android:backgroundTint="@color/dark_navy"
+        android:textColorHint="@color/navy"
         android:ems="10"
         android:hint="@string/password_label"
         android:inputType="textPassword"
         android:maxWidth="488dp"
         android:minHeight="48dp"
-        android:textColor="@color/navy"
+        android:textColor="@color/dark_navy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/editTextUsername"
@@ -66,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:text="@string/username_label"
-        android:textColor="@color/navy"
+        android:textColor="@color/dark_navy"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/editTextUsername"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:text="@string/password_label"
-        android:textColor="@color/navy"
+        android:textColor="@color/dark_navy"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/editTextPassword"
         app:layout_constraintStart_toStartOf="parent"
@@ -90,10 +92,10 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
-        android:buttonTint="@color/navy"
+        android:buttonTint="@color/dark_navy"
         android:text="@string/remember_me_label"
         android:textAlignment="viewStart"
-        android:textColor="@color/navy"
+        android:textColor="@color/dark_navy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
@@ -103,7 +105,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:backgroundTint="@color/orange"
+        android:backgroundTint="@color/dark_navy"
         android:text="@string/login_button_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,20 +113,22 @@
         tools:ignore="TextContrastCheck" />
 
     <ImageView
+        android:id="@+id/logo"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="12dp"
-        android:contentDescription="@string/app_logo_description"
+        android:contentDescription="@string/logo"
         app:layout_constraintBottom_toBottomOf="@+id/textView6"
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintStart_toEndOf="@+id/textView6"
         app:layout_constraintTop_toTopOf="@+id/textView6"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/vd_vector"
-        app:tint="@color/navy" />
+        app:tint="@color/dark_navy" />
 
     <ImageView
-        android:contentDescription="@string/app_logo_description"
+        android:id="@+id/logo2"
+        android:contentDescription="@string/logo"
         android:scaleX="-1"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -135,5 +139,5 @@
         app:layout_constraintTop_toTopOf="@+id/textView6"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/vd_vector"
-        app:tint="@color/navy" />
+        app:tint="@color/dark_navy" />
 </androidx.constraintlayout.widget.ConstraintLayout>

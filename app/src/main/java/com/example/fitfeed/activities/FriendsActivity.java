@@ -1,4 +1,4 @@
-package com.example.fitfeed;
+package com.example.fitfeed.activities;
 
 import android.os.Bundle;
 
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fitfeed.adapters.FriendsSearchRecyclerViewAdapter;
+import com.example.fitfeed.R;
 
 import java.util.ArrayList;
 

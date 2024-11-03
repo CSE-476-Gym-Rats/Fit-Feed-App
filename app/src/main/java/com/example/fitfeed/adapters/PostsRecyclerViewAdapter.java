@@ -1,6 +1,7 @@
 package com.example.fitfeed.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fitfeed.FitFeedApp;
 import com.example.fitfeed.R;
-import com.example.fitfeed.common.Post;
+import com.example.fitfeed.models.Post;
+import com.example.fitfeed.util.GsonHelper;
+import com.example.fitfeed.util.ResourceHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +68,12 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
         // set text and drawable for each post
         holder.textView.setText(posts.get(position).getPostText());
         holder.imageView.setImageDrawable(posts.get(position).getPostDrawable());
+        holder.textView2.setText(
+                String.format(
+                        FitFeedApp.getContext().getResources().getString(R.string.post_workout_json_format),
+                        GsonHelper.getGson().toJson(posts.get(position).getPostWorkout())
+                )
+        );
     }
 
     @Override
@@ -73,11 +84,13 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
         ImageView imageView;
+        TextView textView2;
 
         ViewHolder(View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.postTextView);
             imageView = itemView.findViewById(R.id.postImageView);
+            textView2 = itemView.findViewById(R.id.postTextView2);
         }
     }
 }

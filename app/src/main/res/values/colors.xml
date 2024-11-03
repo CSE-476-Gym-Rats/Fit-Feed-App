@@ -9,4 +9,6 @@
     <color name="home_bg">@color/light_blue</color>
     <color name="workouts_bg">@color/blue</color>
     <color name="social_bg">@color/light_blue</color>
+
+    <color name="white">#FFFFFF</color>
 </resources>

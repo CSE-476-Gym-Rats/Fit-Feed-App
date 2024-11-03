@@ -1,8 +1,7 @@
-package com.example.fitfeed;
+package com.example.fitfeed.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -14,9 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.fitfeed.common.Post;
-import com.example.fitfeed.fragments.HomeFragment;
-import com.example.fitfeed.fragments.SocialFragment;
+import com.example.fitfeed.R;
+import com.example.fitfeed.models.Post;
+import com.example.fitfeed.fragments.FeedFragment;
+import com.example.fitfeed.fragments.ProfileFragment;
 import com.example.fitfeed.fragments.WorkoutsFragment;
 import com.example.fitfeed.util.GsonHelper;
 import com.example.fitfeed.util.ResourceHelpers;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Setup bottom nav view
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.nav_bar_home);
+        bottomNavigationView.setSelectedItemId(R.id.nav_bar_feed);
         bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);
 
         // Setup main toolbar view and set title
@@ -71,30 +71,35 @@ public class MainActivity extends AppCompatActivity {
 
         // set default state if no saved state
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.mainFragmentContainer, HomeFragment.class, null).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.mainFragmentContainer, FeedFragment.class, null).commit();
             if (getPosts().isEmpty()) { restorePostsState(createPlaceholderPosts()); }
         }
+        bottomNavigationView.setSelectedItemId(R.id.nav_bar_feed);
+        bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);
     }
 
     /**
      * Builds a list of placeholders for initial app demo state.
-     * @return List of {@link com.example.fitfeed.common.Post} placeholders.
+     * @return List of {@link Post} placeholders.
      */
     private List<Post> createPlaceholderPosts() {
         Post post1 = new Post(
                 "Your friend just hit a PB in a set!",
                 "holtster2000",
-                ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder1).toString()
+                ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder1).toString(),
+                null
         );
         Post post2 = new Post(
                 "You became friends with Josh!",
                 "holtster2000",
-                ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder2).toString()
+                ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder2).toString(),
+                null
         );
         Post post3 = new Post(
                 "Josh shared his new workout plan with you",
                 "holtster2000",
-                ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder3).toString()
+                ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder3).toString(),
+                null
         );
 
         ArrayList<Post> list = new ArrayList<Post>();
@@ -172,16 +177,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Set fragment based on menu item selected
         if (fragment == null) {
-            if (itemId == R.id.nav_bar_home) {
-                transaction.replace(R.id.mainFragmentContainer, HomeFragment.class, null);
+            if (itemId == R.id.nav_bar_feed) {
+                // Send posts to FeedFragment via bundle
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(FeedFragment.ARG_PARAM1, posts);
+                //Log.d("MainActivity.onNavigationItemSelected", String.format("Bundled %d posts to send to SocialFragment", posts.size()));
+                transaction.replace(R.id.mainFragmentContainer, FeedFragment.class, bundle);
             } else if (itemId == R.id.nav_bar_workouts) {
                 transaction.replace(R.id.mainFragmentContainer, WorkoutsFragment.class, null);
-            } else if (itemId == R.id.nav_bar_social) {
-                // Send posts to SocialFragment via bundle
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(SocialFragment.ARG_PARAM1, posts);
-                //Log.d("MainActivity.onNavigationItemSelected", String.format("Bundled %d posts to send to SocialFragment", posts.size()));
-                transaction.replace(R.id.mainFragmentContainer, SocialFragment.class, bundle);
+            } else if (itemId == R.id.nav_bar_profile) {
+                transaction.replace(R.id.mainFragmentContainer, ProfileFragment.class, null);
             }
         }
 
@@ -198,12 +203,12 @@ public class MainActivity extends AppCompatActivity {
     private void setTitleBarText(int itemId) {
         int titleId = 0;
 
-        if (itemId == R.id.nav_bar_home) {
-            titleId = R.string.home_nav_bar_title;
+        if (itemId == R.id.nav_bar_feed) {
+            titleId = R.string.feed_nav_bar_title;
         } else if (itemId == R.id.nav_bar_workouts) {
             titleId = R.string.workouts_nav_bar_title;
-        } else if (itemId == R.id.nav_bar_social) {
-            titleId = R.string.social_nav_bar_title;
+        } else if (itemId == R.id.nav_bar_profile) {
+            titleId = R.string.profile_nav_bar_title;
         }
 
         titleBarTextView.setText(titleId);
