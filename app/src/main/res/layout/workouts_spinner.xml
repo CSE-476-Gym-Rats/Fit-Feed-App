@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/workoutsSpinnerImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/vd_vector" />
+
+    <TextView
+        android:id="@+id/workoutsSpinnerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/workoutsSpinnerImageView"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_toEndOf="@+id/workoutsSpinnerImageView"
+        android:gravity="center"
+        android:text="@string/workout_name_placeholder"
+        android:textColor="@color/navy"
+        android:textSize="16sp" />
+
+</RelativeLayout>

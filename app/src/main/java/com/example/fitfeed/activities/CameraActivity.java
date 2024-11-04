@@ -12,9 +12,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -26,12 +29,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.fitfeed.FitFeedApp;
 import com.example.fitfeed.R;
+import com.example.fitfeed.adapters.WorkoutsSpinnerArrayAdapter;
 import com.example.fitfeed.models.Post;
 import com.example.fitfeed.fragments.FeedFragment;
+import com.example.fitfeed.models.Workout;
+import com.example.fitfeed.util.FileManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -40,6 +48,9 @@ public class CameraActivity extends AppCompatActivity {
     private File imageFile;
     private ImageView imageView;
     private boolean fileError;
+    private Spinner workoutSpinner;
+    private WorkoutsSpinnerArrayAdapter spinnerAdapter;
+    private Workout selectedWorkout;
 
     public static final int RESULT_OK = 0;
 
@@ -62,6 +73,17 @@ public class CameraActivity extends AppCompatActivity {
         Button postButton = findViewById(R.id.cameraActivityPostButton);
         postButton.setOnClickListener(this::savePost);
 
+        // find workout selector spinner
+        workoutSpinner = findViewById(R.id.postWorkoutSpinner);
+        try {
+            spinnerAdapter = new WorkoutsSpinnerArrayAdapter(this, FileManager.loadWorkouts(FitFeedApp.getContext()));
+            workoutSpinner.setAdapter(spinnerAdapter);
+        } catch (Exception e) {
+            Toast.makeText(CameraActivity.this, "Error populating workouts spinner.", Toast.LENGTH_SHORT).show();
+        }
+
+        workoutSpinner.setOnItemSelectedListener(getWorkoutSelected());
+
         // find image view
         imageView = findViewById(R.id.cameraActivityImageView);
         if (imageView.getTag() == null) {
@@ -79,6 +101,22 @@ public class CameraActivity extends AppCompatActivity {
                 fileError = true;
             }
         }
+    }
+
+    private AdapterView.OnItemSelectedListener getWorkoutSelected() {
+        return new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent,
+                                       View view, int position, long id) {
+                // It returns the clicked item.
+                Workout clickedItem = (Workout)
+                        parent.getItemAtPosition(position);
+                if (clickedItem != null) { selectedWorkout = clickedItem; }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        };
     }
 
 
@@ -131,8 +169,9 @@ public class CameraActivity extends AppCompatActivity {
         Intent postIntent = new Intent(view.getContext(), FeedFragment.class);
         EditText editText = findViewById(R.id.cameraActivityEditText);
         String filename = ((Integer) imageView.getTag() != R.drawable.ic_launcher_foreground) ? imageFile.getAbsolutePath() : null;
+        Workout workout = selectedWorkout != null ? selectedWorkout : null;
 
-        postIntent.putExtra("post", new Post(editText.getText().toString(), "holtster2000", filename, null));
+        postIntent.putExtra("post", new Post(editText.getText().toString(), "holtster2000", filename, workout));
 
         setResult(CameraActivity.RESULT_OK, postIntent);
         finish();
