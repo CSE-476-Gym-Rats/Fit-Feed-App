@@ -1,6 +1,5 @@
 package com.example.fitfeed.activities;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.fitfeed.R;
 import com.example.fitfeed.R.string;
 import com.example.fitfeed.models.Workout;
-import com.example.fitfeed.utils.FileManager;
+import com.example.fitfeed.util.FileManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class NewWorkoutActivity extends AppCompatActivity {

@@ -1,12 +1,17 @@
 [versions]
+#noinspection AndroidGradlePluginVersion
 agp = "8.6.0"
+desugar_jdk_libs = "2.1.2"
+gson = "2.11.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
+#noinspection GradleDependency
 activity = "1.9.1"
 constraintlayout = "2.1.4"
+#noinspection GradleDependency,GradleDependency,GradleDependency,GradleDependency,GradleDependency
 navigationCompose = "2.8.1"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
 playServicesMaps = "18.1.0"
@@ -14,6 +19,8 @@ playServicesLocation = "21.3.0"
 places = "4.0.0"
 
 [libraries]
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

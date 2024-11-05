@@ -1,23 +1,29 @@
 package com.example.fitfeed.fragments;
 
-import android.graphics.drawable.Drawable;
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.fitfeed.activities.CameraActivity;
+import com.example.fitfeed.activities.FriendsActivity;
+import com.example.fitfeed.models.Post;
 import com.example.fitfeed.models.Workout;
-import com.example.fitfeed.utils.FileManager;
-import com.example.fitfeed.viewAdapters.PostsRecyclerViewAdapter;
+import com.example.fitfeed.util.FileManager;
+import com.example.fitfeed.adapters.PostsRecyclerViewAdapter;
 import com.example.fitfeed.R;
 
 import java.util.ArrayList;
@@ -30,46 +36,92 @@ import java.util.List;
  */
 public class FeedFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String ARG_PARAM1 = "posts";
+    public static final int SOCIAL_NEW_POST_REQUEST_CODE = 32;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private LinearLayoutManager postsLayoutManager;
     private PostsRecyclerViewAdapter postsRecyclerViewAdapter;
-    private RecyclerView postRecyclerView;
-    private Parcelable stateList;
+    private RecyclerView recyclerView;
+    private ArrayList<Post> posts;
 
-    public FeedFragment() {
-        // Required empty public constructor
-    }
+    public FeedFragment() {}
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param posts The list of posts to display in the feed.
      * @return A new instance of fragment FeedFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FeedFragment newInstance(String param1, String param2) {
+    public static FeedFragment newInstance(ArrayList<Post> posts) {
         FeedFragment fragment = new FeedFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelableArrayList(ARG_PARAM1, posts);
         fragment.setArguments(args);
         return fragment;
     }
 
+    /** @noinspection deprecation */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            ArrayList<Post> postsReceived = getArguments().getParcelableArrayList(ARG_PARAM1);
+            //Log.d("FeedFragment.onCreate", String.format("Received %d posts", (postsReceived != null) ? postsReceived.size() : 0));
+            posts = (postsReceived != null) ? postsReceived : new ArrayList<>();
+        } else {
+            if (posts == null) {
+                posts = new ArrayList<>();
+            }
+        }
+        setHasOptionsMenu(true);
+    }
+
+    /** @noinspection deprecation*/
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.social_menu, menu);
+    }
+
+    /** @noinspection deprecation*/
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.socialMenuAddFriends: {
+                Intent intent = new Intent(getContext(), FriendsActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            case R.id.socialMenuNewPost: {
+                Intent intent = new Intent(getContext(), CameraActivity.class);
+                intent.putExtra("post", new Post("", ""));
+                startActivityForResult(intent, SOCIAL_NEW_POST_REQUEST_CODE);
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /** @noinspection deprecation*/
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        // called after returning from camera activity, check request and result codes for success
+        if (requestCode == SOCIAL_NEW_POST_REQUEST_CODE && resultCode == CameraActivity.RESULT_OK) {
+            if (data != null) {
+                Post newPost = data.getParcelableExtra("post");
+                if (newPost != null) {
+                    if (!newPost.getPostUser().isEmpty() || !newPost.getPostText().isEmpty() || newPost.getPostDrawable() != null) {
+                        postsRecyclerViewAdapter.addPost(newPost);
+                        posts = postsRecyclerViewAdapter.getPosts();
+                        postsLayoutManager.scrollToPositionWithOffset(0, 0);
+                    }
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -84,10 +136,28 @@ public class FeedFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Setup RecyclerView
-        postRecyclerView = view.findViewById(R.id.recyclerViewPosts);
-        postRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        loadPosts();
+        // TODO implement actual posts instead of placeholder values
+        if (postsLayoutManager == null) {
+            postsLayoutManager = new LinearLayoutManager(view.getContext());
+        }
+
+        if (postsRecyclerViewAdapter == null) {
+            postsRecyclerViewAdapter = new PostsRecyclerViewAdapter(view.getContext(), posts);
+        } else {
+            if (postsRecyclerViewAdapter.getPosts().size() != posts.size()) {
+                postsRecyclerViewAdapter.restorePostsState(posts);
+            }
+        }
+
+        // set up the RecyclerView
+        if (recyclerView == null) {
+            recyclerView = view.findViewById(R.id.recyclerViewPosts);
+            recyclerView.setLayoutManager(postsLayoutManager);
+            recyclerView.setAdapter(postsRecyclerViewAdapter);
+            recyclerView.setSaveEnabled(true);
+        }
+
+        loadPosts(); //todo
     }
 
     @Override
@@ -99,8 +169,8 @@ public class FeedFragment extends Fragment {
     private void loadPosts() {
         try {
             List<Workout> workouts = FileManager.loadWorkouts(getContext());
-            PostsRecyclerViewAdapter adapter = new PostsRecyclerViewAdapter(getContext(), workouts);
-            postRecyclerView.setAdapter(adapter);
+            PostsRecyclerViewAdapter adapter = new PostsRecyclerViewAdapter(getContext(), posts);
+            recyclerView.setAdapter(adapter);
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error loading posts.", Toast.LENGTH_SHORT).show();
         }

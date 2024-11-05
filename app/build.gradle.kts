@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring (libs.desugar.jdk.libs)
 
     // Jetpack Compose integration
     implementation(libs.navigation.compose)
@@ -54,6 +55,8 @@ dependencies {
 
     // Testing Navigation
     androidTestImplementation(libs.navigation.testing)
+
+    implementation(libs.gson)
 
     implementation(libs.appcompat)
     implementation(libs.material)

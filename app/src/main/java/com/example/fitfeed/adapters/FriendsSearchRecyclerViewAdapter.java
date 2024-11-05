@@ -1,4 +1,4 @@
-package com.example.fitfeed.viewAdapters;
+package com.example.fitfeed.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

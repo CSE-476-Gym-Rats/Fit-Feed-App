@@ -1,7 +1,5 @@
-package com.example.fitfeed.utils;
+package com.example.fitfeed.util;
 
-
-import static java.security.AccessController.getContext;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;

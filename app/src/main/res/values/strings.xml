@@ -8,11 +8,20 @@
     <string name="workouts_nav_bar_title">Workouts</string>
     <string name="profile_nav_bar_title">Profile</string>
     <string name="add_friends_title">Enter friend\'s username:</string>
+    <string name="new_post_button">New Post</string>
     <string name="search_button">Search</string>
     <string name="add_friends_button">Add Friends</string>
     <string name="post_placeholder">Your friend made a post!</string>
     <string name="friend_search_placeholder">Username: holtster2000</string>
     <string name="home_text">Welcome to FitFeed!\n\nCreate a workout plan or add some friends to get started</string>
+    <string name="take_picture_button">Take Picture</string>
+    <string name="post_button">Post</string>
+    <string name="camera_activity_text">Create your post!\n(pump pic optional)</string>
+    <string name="camera_error">Error! Could not open camera.</string>
+    <string name="camera_file_error">Error! Requires external file permissions to take pictures.</string>
+    <string name="post_text_hint">Enter text for post…</string>
+    <string name="camera_activity_image_content_description">Image to be added to post.</string>
+    <string name="app_logo_description">App Logo image</string>
     <string name="username_placeholder">username</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit_home_gym">Edit Home Gym</string>
@@ -42,5 +51,5 @@
     <string name="empty_exercise_message">cannot be empty</string>
     <string name="workout_saved_successfully">Workout saved successfully!</string>
     <string name="error_saving_workout">"Error saving workout: "</string>
-
+    <string name="post_workout_json_format">Workout JSON:\n%s</string>
 </resources>

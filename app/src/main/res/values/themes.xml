@@ -3,7 +3,7 @@
     <style name="Base.Theme.FitFeed" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/navy</item>
+        <item name="colorPrimaryDark">@color/dark_navy</item>
     </style>
-
-    <style name="Theme.FitFeed" parent="Base.Theme.FitFeed" />
 </resources>

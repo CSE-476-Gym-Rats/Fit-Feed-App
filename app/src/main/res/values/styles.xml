@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <style name="Theme.FitFeed" parent="Base.Theme.FitFeed">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:statusBarColor">@color/dark_navy</item>
+    </style>
 </resources>
