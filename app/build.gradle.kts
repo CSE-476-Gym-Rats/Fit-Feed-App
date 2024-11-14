@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.security.crypto)
     coreLibraryDesugaring (libs.desugar.jdk.libs)
 
     // Jetpack Compose integration
