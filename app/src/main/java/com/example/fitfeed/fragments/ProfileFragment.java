@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.fitfeed.R;
 import com.example.fitfeed.activities.FriendsActivity;
 import com.example.fitfeed.activities.GymSelectorMapsActivity;
+import com.example.fitfeed.util.TokenManager;
 import com.google.android.material.button.MaterialButton;
 
 /**
@@ -100,7 +101,7 @@ public class ProfileFragment extends Fragment {
         homeGymValue.setText(homeGym);
 
         // Set the username
-        String username = sharedPref.getString("username", getString(R.string.username_placeholder));
+        String username = TokenManager.getUsername();
         TextView usernameValue = getView().findViewById(R.id.username);
         usernameValue.setText(username);
     }

@@ -52,4 +52,11 @@
     <string name="workout_saved_successfully">Workout saved successfully!</string>
     <string name="error_saving_workout">"Error saving workout: "</string>
     <string name="post_workout_json_format">Workout JSON:\n%s</string>
+    <string name="API_URL">http://api.fitfeed.online:8081</string>
+    <string name="LOGIN_ENDPOINT">/login</string>
+    <string name="REGISTER_ENDPOINT">/register</string>
+    <string name="ADD_WORKOUT_ENDPOINT">/workout</string>
+    <string name="PULL_WORKOUTS_ENDPOINT">/workouts</string>
+    <string name="incorrect_username_or_password">Incorrect username or password</string>
+    <string name="connection_error">Error connecting to server. Please check internet connection and try again.</string>
 </resources>

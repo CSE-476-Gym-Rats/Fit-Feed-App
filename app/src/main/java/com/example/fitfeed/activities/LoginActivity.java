@@ -1,12 +1,12 @@
 package com.example.fitfeed.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,13 +15,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.fitfeed.R;
+import com.example.fitfeed.util.APIManager;
+import com.example.fitfeed.util.TokenManager;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // TODO Not used currently since login is not implemented
     private String username;
     private String password;
-    private boolean rememberMe;
 
     private EditText usernameEditText;
     private EditText passwordEditText;
@@ -41,23 +41,72 @@ public class LoginActivity extends AppCompatActivity {
 
         usernameEditText = findViewById(R.id.editTextUsername);
         passwordEditText = findViewById(R.id.editTextPassword);
-        rememberMeCheckBox = findViewById(R.id.checkBox);
+        rememberMeCheckBox = findViewById(R.id.rememberMe);
         loginButton = findViewById(R.id.buttonLogin);
 
-        loginButton.setOnClickListener(this::goToHome);
+        loginButton.setOnClickListener(this::login);
+
+        // Check if credentials are saved
+        String savedUsername = TokenManager.getUsername();
+        String savedPassword = TokenManager.getPassword();
+
+        // "Remember me" auto login
+        if (savedUsername != null && savedPassword != null) {
+            APIManager.Login(savedUsername, savedPassword, this, success -> {
+                switch (success) {
+                    case -1: {
+                        LoginActivity.this.loginError();
+                        break;
+                    }
+                    case 0: {
+                        LoginActivity.this.loginFail();
+                        break;
+                    }
+                    case 1: {
+                        LoginActivity.this.loginSuccess();
+                        break;
+                    }
+                }
+            });
+        }
     }
 
-    public void goToHome(View view) {
-        EditText username = findViewById(R.id.editTextUsername);
-        SharedPreferences sharedPreferences = getSharedPreferences("com.example.fitfeed", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("username", username.getText().toString());
-        editor.apply();
-        skipLogin(); // TODO only skip login if remember me checked
+    public void login(View view) {
+        username = usernameEditText.getText().toString();
+        password = passwordEditText.getText().toString();
+
+        APIManager.Login(username, password, this, success -> {
+            switch (success) {
+                case -1: {
+                    LoginActivity.this.loginError();
+                    break;
+                }
+                case 0: {
+                    LoginActivity.this.loginFail();
+                    break;
+                }
+                case 1: {
+                    LoginActivity.this.loginSuccess();
+                    break;
+                }
+            }
+        });
     }
 
-    private void skipLogin() {
+    private void loginSuccess() {
+        // Remember me
+        if (rememberMeCheckBox.isChecked()) {
+            TokenManager.rememberMe(username, password);
+        }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    private void loginFail() {
+        Toast.makeText(this, R.string.incorrect_username_or_password, Toast.LENGTH_SHORT).show();
+    }
+
+    private void loginError() {
+        Toast.makeText(this, R.string.connection_error, Toast.LENGTH_SHORT).show();
     }
 }

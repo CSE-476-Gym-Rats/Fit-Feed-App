@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.fitfeed.activities.MainActivity;
+import com.example.fitfeed.util.TokenManager;
 
 public class FitFeedApp extends Application {
     private static FitFeedApp instance;
@@ -21,6 +22,7 @@ public class FitFeedApp extends Application {
     public void onCreate() {
         instance = this;
         clearPosts();   // todo comment out
+        TokenManager.init(this);
         super.onCreate();
     }
 
