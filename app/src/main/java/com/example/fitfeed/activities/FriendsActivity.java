@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fitfeed.adapters.FriendsSearchRecyclerViewAdapter;
 import com.example.fitfeed.R;
 import com.example.fitfeed.util.APIManager;
+import com.example.fitfeed.util.TokenManager;
 
 import java.util.ArrayList;
 
@@ -27,39 +28,31 @@ public class FriendsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        TokenManager.init(this);
+
+        // Get the logged-in username from TokenManager
+        String loggedInUsername = TokenManager.getUsername();
+        if (loggedInUsername == null) {
+            Toast.makeText(this, "Error: User not logged in.", Toast.LENGTH_SHORT).show();
+            finish();
+            return; // Exit the activity
+        }
+
+        // Initialize the UI
         setContentView(R.layout.activity_friends);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        // Initialize RecyclerView with placeholder data
-        ArrayList<String> postText = new ArrayList<>();
-        postText.add("Username1");
-        postText.add("Username2");
-        postText.add("Username3");
-
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewFriendsSearch);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        friendsSearchRecyclerViewAdapter = new FriendsSearchRecyclerViewAdapter(this, postText);
-        recyclerView.setAdapter(friendsSearchRecyclerViewAdapter);
-        recyclerView.setSaveEnabled(true);
-
-        // Initialize EditText fields and button
-        EditText usernameEditText = findViewById(R.id.editTextText);  // EditText for your own username
-        EditText friendUsernameEditText = findViewById(R.id.editTextFriendUsername);  // EditText for friend's username
+        EditText friendUsernameEditText = findViewById(R.id.editTextFriendUsername); // Friend's username input
         Button addFriendButton = findViewById(R.id.buttonFriendsSearch);
 
-        // Set button click listener to add a friend
+        // Set up the button click listener
         addFriendButton.setOnClickListener(v -> {
-            String username = usernameEditText.getText().toString().trim();
             String friendUsername = friendUsernameEditText.getText().toString().trim();
 
-            if (!username.isEmpty() && !friendUsername.isEmpty()) {
-                // Call the API to add a friend
-                addFriend(username, friendUsername);
+            if (!friendUsername.isEmpty()) {
+                // Use the logged-in username automatically
+                addFriend(loggedInUsername, friendUsername);
+            } else {
+                Toast.makeText(this, "Please enter a friend's username.", Toast.LENGTH_SHORT).show();
             }
         });
     }

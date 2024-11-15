@@ -95,4 +95,14 @@ public class TokenManager {
         return sharedPreferences.getString(PASSWORD, null);
     }
 
+    /**
+     * Set the username in SharedPreferences
+     * Need this to remember the username while in the app
+     * @param username
+     */
+    public static void setUsername(String username) {
+        sharedPreferences.edit()
+                .putString(USERNAME, username)
+                .apply();
+    }
 }

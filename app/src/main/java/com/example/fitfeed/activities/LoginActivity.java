@@ -31,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TokenManager.init(this); // Initialize TokenManager
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -98,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
         if (rememberMeCheckBox.isChecked()) {
             TokenManager.rememberMe(username, password);
         }
+        TokenManager.setUsername(username);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
