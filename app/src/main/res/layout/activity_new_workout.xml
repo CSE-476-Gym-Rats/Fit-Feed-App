@@ -70,6 +70,19 @@
             android:layout_marginTop="8dp"
             android:text="@string/add_exercise_button"
             app:backgroundTint="@color/dark_navy"/>
+
+        <Button
+            android:id="@+id/deleteExerciseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete Last Exercise"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/dark_navy"
+            android:visibility="gone" />
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
