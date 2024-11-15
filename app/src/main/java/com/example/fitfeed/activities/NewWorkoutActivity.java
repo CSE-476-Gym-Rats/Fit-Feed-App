@@ -25,11 +25,15 @@ public class NewWorkoutActivity extends AppCompatActivity {
     private FloatingActionButton saveButton;
     private LinearLayout exerciseRows;
     private Workout workout = new Workout();
+    private Button chooseEmojiButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_workout);
+
 
         // Listener for addExerciseButton
         exerciseRows = findViewById(R.id.linearLayoutContainer);

@@ -59,4 +59,8 @@
     <string name="PULL_WORKOUTS_ENDPOINT">/workouts</string>
     <string name="incorrect_username_or_password">Incorrect username or password</string>
     <string name="connection_error">Error connecting to server. Please check internet connection and try again.</string>
+    <string name="choose_emoji">Choose Emoji</string>
+    <string name="select_emoji">Select an Emoji</string>
+    <string name="selected_emoji">Selected Emoji: %s</string>
+
 </resources>
