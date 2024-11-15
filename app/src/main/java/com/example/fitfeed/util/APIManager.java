@@ -1,8 +1,10 @@
 package com.example.fitfeed.util;
 
 import android.content.Context;
+import android.util.JsonReader;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -14,11 +16,14 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.UUID;
 
 import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.models.Post;
+import com.google.gson.Gson;
 //import com.example.fitfeed.util.TokenManager;
 
 /**
@@ -34,8 +39,10 @@ public class APIManager {
     static final String REGISTER_ENDPOINT = "/register";
     static final String ADD_WORKOUT_ENDPOINT = "/workout";
     static final String PULL_WORKOUTS_ENDPOINT = "/workouts";
-    static final String MAKE_POST_ENDPOINT = "/makepost";
-    static final String GET_POST_ENDPOINT = "/getposts";
+    static final String MAKE_POST_ENDPOINT = "/post";
+    static final String GET_POST_ENDPOINT = "/posts";
+
+    static final UUID TEST_USER_ID = UUID.fromString("5d72bb37-a696-450e-b5f4-fd9dd06c5a33");
 
     /**
      * Send a login request
@@ -107,6 +114,115 @@ public class APIManager {
     // Also awaiting approval for changes to backend for Post support
     private static List<String> testUserFriends = new ArrayList<>();
     private static Dictionary<String, List<Post>> testPosts = new Hashtable<>();
+
+    public static ArrayList<Post> getPosts(String user) {
+        //executorService.submit(() -> {
+        ArrayList<Post> result = new ArrayList<>();
+            int statusCode = 0; // Default to failure
+
+            try {
+                URL url = new URL(API_URL + GET_POST_ENDPOINT);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.connect();
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    String line;
+                    StringBuilder response = new StringBuilder();
+
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                    in.close();
+
+                    String json = response.toString();
+                    List<Post> posts = parsePosts(json);
+
+                    for (Post post : posts) {
+                        result.add(post);
+                    }
+                }
+
+            } catch (Exception e) {
+                Log.e("TAG", e.toString());
+                statusCode = -1;
+            }
+            int finalStatusCode = statusCode;
+
+        //});
+        return result;
+    }
+
+    private static List<Post> parsePosts(String json) {
+        List<Post> posts = new ArrayList<>();
+
+        json = json.substring(1, json.length() - 1);
+
+        String[] objects = json.split("},\\{");
+
+        for (String object : objects) {
+            object = object.replace("{", "").replace("}", "");
+            String[] fields = object.split(",");
+
+            String text = "";
+            String user = "";
+            long workoutid = 0;
+            String imgUri = "";
+            for (String field : fields) {
+                String[] keyValue = field.split(":");
+
+                String key = keyValue[0].trim().replace("\"", "");
+                String value = keyValue[1].trim().replace("\"", "");
+
+                switch (key) {
+                    case "postText":
+                        text = value;
+                        break;
+                    case "userId":
+                        user = value;
+                        break;
+                    case "workoutId":
+                        workoutid = Long.parseLong(value);
+                        break;
+                    case "imageUri":
+                        imgUri = value;
+                        break;
+                }
+            }
+            posts.add(new Post(text, user));
+        }
+
+        return posts;
+    }
+
+    public static void makePost(Post post, Context context) {
+        int statusCode = 0; // Default to failure
+
+        try {
+            URL url = new URL(API_URL + MAKE_POST_ENDPOINT);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+
+            // Create JSON payload
+            // todo: change workoutid argument from timestamp to actual workout id and add user id
+            String jsonInputString = String.format("{\"userId\": \"%s\", \"postText\": \"%s\", \"workoutId\": \"%d\", \"imageUri\": \"%s\"}",
+                    TEST_USER_ID, post.getPostText(), post.getPostWorkout().getTimestamp(), "text uri");
+            conn.setDoOutput(true);
+            conn.getOutputStream().write(jsonInputString.getBytes("UTF-8"));
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+
+            }
+        } catch (Exception e) {
+            Log.e("TAG", e.toString());
+            statusCode = -1;
+        }
+    }
 
     /**
      * Sets up data to simulate added friends and workout posts to load.

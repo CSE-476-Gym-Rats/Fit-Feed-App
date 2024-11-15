@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         //return (this.posts != null) ? this.posts : new ArrayList<>();
         APIManager.setupTestPosts();
         return APIManager.GetWorkoutPosts();
+        //return APIManager.getPosts("fitfeed-admin");
     }
 
     /**

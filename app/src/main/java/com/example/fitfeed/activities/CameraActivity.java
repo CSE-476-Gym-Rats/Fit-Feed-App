@@ -36,6 +36,7 @@ import com.example.fitfeed.models.Post;
 import com.example.fitfeed.fragments.FeedFragment;
 import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.util.FileManager;
+import com.example.fitfeed.util.APIManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -171,7 +172,11 @@ public class CameraActivity extends AppCompatActivity {
         String filename = ((Integer) imageView.getTag() != R.drawable.ic_launcher_foreground) ? imageFile.getAbsolutePath() : null;
         Workout workout = selectedWorkout != null ? selectedWorkout : null;
 
-        postIntent.putExtra("post", new Post(editText.getText().toString(), "holtster2000", filename, workout));
+        Post finalPost = new Post(editText.getText().toString(), "alexholt", filename, workout);
+
+        postIntent.putExtra("post", finalPost);
+
+        APIManager.makePost(finalPost, view.getContext());
 
         setResult(CameraActivity.RESULT_OK, postIntent);
         finish();
