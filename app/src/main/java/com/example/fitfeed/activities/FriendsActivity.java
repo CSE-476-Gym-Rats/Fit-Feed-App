@@ -60,8 +60,6 @@ public class FriendsActivity extends AppCompatActivity {
             if (!username.isEmpty() && !friendUsername.isEmpty()) {
                 // Call the API to add a friend
                 addFriend(username, friendUsername);
-            } else {
-
             }
         });
     }
