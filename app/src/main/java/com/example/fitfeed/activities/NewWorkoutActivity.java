@@ -21,6 +21,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
 
     private Button addExerciseButton;
     private FloatingActionButton cancelButton;
+    private Button deleteExerciseButton;
     private FloatingActionButton saveButton;
     private LinearLayout exerciseRows;
     private Workout workout = new Workout();
@@ -34,6 +35,8 @@ public class NewWorkoutActivity extends AppCompatActivity {
         exerciseRows = findViewById(R.id.linearLayoutContainer);
         addExerciseButton = findViewById(R.id.addExerciseButton);
         addExerciseButton.setOnClickListener(v -> addNewExerciseRow());
+        deleteExerciseButton = findViewById(R.id.deleteExerciseButton); // Initialize delete button
+        deleteExerciseButton.setOnClickListener(v -> deleteLastExerciseRow()); // Set delete button listener
 
         // Listener for cancel
         cancelButton = this.findViewById(R.id.cancelNewWorkout);
@@ -49,7 +52,6 @@ public class NewWorkoutActivity extends AppCompatActivity {
      * Called when "Add Exercise" is pressed
      */
     private void addNewExerciseRow() {
-
         if (!validateExerciseFields()) {
             return;
         }
@@ -60,6 +62,36 @@ public class NewWorkoutActivity extends AppCompatActivity {
         // Insert the new row above the "Add Exercise" button
         int index = exerciseRows.indexOfChild(addExerciseButton);
         exerciseRows.addView(newRow, index);
+
+        // Update the visibility of the delete button
+        updateDeleteButtonVisibility();
+    }
+
+    /**
+     * Deletes the most recent exercise row when "Delete Last Exercise" is pressed.
+     */
+    private void deleteLastExerciseRow() {
+        int childCount = exerciseRows.getChildCount();
+
+        // Ensure there is more than one exercise row to delete
+        if (childCount > 3) { // More than one exercise row plus the two buttons
+            // Get the last exercise row before the "Add Exercise" button
+            View lastRow = exerciseRows.getChildAt(childCount - 3); // The last actual exercise row
+            exerciseRows.removeView(lastRow);
+        } else {
+            Toast.makeText(this, "At least one exercise row must remain.", Toast.LENGTH_SHORT).show();
+        }
+
+        // Update the visibility of the delete button
+        updateDeleteButtonVisibility();
+    }
+
+    /**
+     * Updates the visibility of the "Delete Last Exercise" button based on the number of exercise rows.
+     */
+    private void updateDeleteButtonVisibility() {
+        // If there's more than one exercise row, show the delete button; otherwise, hide it
+        deleteExerciseButton.setVisibility(exerciseRows.getChildCount() > 3 ? View.VISIBLE : View.GONE);
     }
 
     /**
