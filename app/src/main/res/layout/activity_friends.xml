@@ -35,12 +35,27 @@
         android:textColor="@color/dark_navy"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
+    <!-- Add EditText for friend's username -->
+    <EditText
+        android:id="@+id/editTextFriendUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:inputType="text"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toStartOf="@+id/buttonFriendsSearch"
+        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/dark_navy"
+        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
+
     <Button
         android:id="@+id/buttonFriendsSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/orange"
-        android:text="@string/search_button"
+        android:text="@string/add_friend_button"
         app:layout_constraintBottom_toBottomOf="@+id/editTextText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.88"

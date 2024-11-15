@@ -25,6 +25,7 @@ public class APIManager {
     static final String REGISTER_ENDPOINT = "/register";
     static final String ADD_WORKOUT_ENDPOINT = "/workout";
     static final String PULL_WORKOUTS_ENDPOINT = "/workouts";
+    static final String ADD_FRIEND_ENDPOINT = "/friend";
 
     /**
      * Send a login request
@@ -83,6 +84,64 @@ public class APIManager {
             });
         });
     }
+
+    /**
+     * Callback interface for handling add friend results
+     */
+    public interface AddFriendCallback {
+        void onAddFriendResult(int statusCode);
+    }
+
+    /**
+     * Add a friend
+     * @param username
+     * @param friend_username
+     * @param callback - callback to handle the response code
+     */
+    public static void AddFriend(String username, String friend_username, AddFriendCallback callback) {
+        executorService.submit(() -> {
+            int statusCode = 0; // Default to failure
+
+            try {
+                URL url = new URL(API_URL + ADD_FRIEND_ENDPOINT);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+
+                // Create JSON payload
+                String jsonInputString = String.format("{\"username\": \"%s\", \"friend_username\": \"%s\"}", username, friend_username);
+                conn.setDoOutput(true);
+                conn.getOutputStream().write(jsonInputString.getBytes("UTF-8"));
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String inputLine;
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+
+                    // Process the response if needed; for now, we just set success status code
+                    statusCode = 1;
+                }
+
+            } catch (Exception e) {
+                Log.e("AddFriendError", "Failed to add friend: " + e.toString());
+                statusCode = -1; // Connection error
+            }
+
+            int finalStatusCode = statusCode;
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                if (callback != null) {
+                    callback.onAddFriendResult(finalStatusCode);
+                }
+            });
+        });
+    }
+
 
     /**
      * Send a register request
