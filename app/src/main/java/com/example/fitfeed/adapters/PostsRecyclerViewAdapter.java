@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fitfeed.FitFeedApp;
 import com.example.fitfeed.R;
 import com.example.fitfeed.models.Post;
+import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.util.GsonHelper;
 import com.example.fitfeed.util.ResourceHelpers;
 
@@ -68,11 +69,27 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
         // set text and drawable for each post
         holder.textView.setText(posts.get(position).getPostText());
         holder.imageView.setImageDrawable(posts.get(position).getPostDrawable());
+        Workout postWorkout = posts.get(position).getPostWorkout();
+        List<Workout.Exercise> exercises = postWorkout.getExercises();
+        String formattedText = "Workout exercises:\n";
+
+        for (Workout.Exercise exercise : exercises) {
+            String formattedExercise = String.format(
+                    "%s, %d sets, %d reps, weight: %f\n",
+                    exercise.getName(),
+                    exercise.getSets(),
+                    exercise.getReps(),
+                    exercise.getWeight()
+            );
+            formattedText = formattedText + formattedExercise;
+        }
+
         holder.textView2.setText(
-                String.format(
+                /*String.format(
                         FitFeedApp.getContext().getResources().getString(R.string.post_workout_json_format),
                         GsonHelper.getGson().toJson(posts.get(position).getPostWorkout())
-                )
+                )*/
+                formattedText
         );
     }
 

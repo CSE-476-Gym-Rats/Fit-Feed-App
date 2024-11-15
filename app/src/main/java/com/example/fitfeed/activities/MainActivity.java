@@ -20,6 +20,7 @@ import com.example.fitfeed.fragments.ProfileFragment;
 import com.example.fitfeed.fragments.WorkoutsFragment;
 import com.example.fitfeed.util.GsonHelper;
 import com.example.fitfeed.util.ResourceHelpers;
+import com.example.fitfeed.util.APIManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.reflect.TypeToken;
 
@@ -72,7 +73,11 @@ public class MainActivity extends AppCompatActivity {
         // set default state if no saved state
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.mainFragmentContainer, FeedFragment.class, null).commit();
-            if (getPosts().isEmpty()) { restorePostsState(createPlaceholderPosts()); }
+            ArrayList<Post> postList = getPosts();
+            if (postList.isEmpty()) { restorePostsState(createPlaceholderPosts()); }
+            else {
+                restorePostsState(postList);
+            }
         }
         bottomNavigationView.setSelectedItemId(R.id.nav_bar_feed);
         bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);
@@ -115,7 +120,10 @@ public class MainActivity extends AppCompatActivity {
      * @return {@link ArrayList} of {@link Post} objects.
      */
     public ArrayList<Post> getPosts() {
-        return (this.posts != null) ? this.posts : new ArrayList<>();
+        //return (this.posts != null) ? this.posts : new ArrayList<>();
+        APIManager.setupTestPosts();
+        return APIManager.GetWorkoutPosts();
+        //return APIManager.getPosts("fitfeed-admin");
     }
 
     /**
