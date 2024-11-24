@@ -1,5 +1,6 @@
 package com.example.fitfeed.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.JsonReader;
 import android.util.Log;
@@ -8,8 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -34,7 +38,8 @@ public class APIManager {
 
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();  // Use a single-thread executor for simplicity
 
-    static final String API_URL = "http://api.fitfeed.online:8081";
+    //static final String API_URL = "http://api.fitfeed.online:8081";
+    static final String API_URL = "http://10.0.2.2:8081";
     static final String LOGIN_ENDPOINT = "/login";
     static final String REGISTER_ENDPOINT = "/register";
     static final String ADD_WORKOUT_ENDPOINT = "/workout";
@@ -222,6 +227,54 @@ public class APIManager {
             Log.e("TAG", e.toString());
             statusCode = -1;
         }
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static void addWorkout(Workout workout, Context context, WorkoutCallback callback) {
+        executorService.submit(() -> {
+            int statusCode = 0; // Default to failure
+
+            try {
+                URL url = new URL(API_URL + ADD_WORKOUT_ENDPOINT);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                String user = TokenManager.getAccessToken();
+                conn.setRequestProperty("Authorization", "Bearer " + user);
+                // Create JSON payload
+
+                // Build exercise json string first
+                StringBuilder exercisesJson = new StringBuilder();
+                for (Workout.Exercise exercise : workout.getExercises()) {
+                    // If not first
+                    if (exercisesJson.length() > 0) {
+                        exercisesJson.append(", ");
+                    }
+
+                    exercisesJson.append(String.format("{\"exerciseName\": \"%s\", \"sets\": %d, \"reps\": %d, \"weight\": %.1f}",
+                            exercise.getName(), exercise.getSets(), exercise.getReps(), exercise.getWeight()));
+                }
+                String jsonInputString = String.format("{\"workoutName\": \"%s\", \"workoutTimestamp\": %d, \"exercises\": [%s]}",
+                        workout.getWorkoutName(), workout.getTimestamp(), exercisesJson
+                );
+
+                conn.setDoOutput(true);
+                conn.getOutputStream().write(jsonInputString.getBytes("UTF-8"));
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
+                    statusCode = 1;
+                }
+            } catch (Exception e) {
+                Log.e("TAG", e.toString());
+                statusCode = -1;
+            }
+
+            int finalStatusCode = statusCode;
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                callback.onWorkoutResult(finalStatusCode);
+            });
+        });
     }
 
     /**
