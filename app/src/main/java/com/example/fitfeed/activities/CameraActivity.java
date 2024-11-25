@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,6 +38,7 @@ import com.example.fitfeed.fragments.FeedFragment;
 import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.util.FileManager;
 import com.example.fitfeed.util.APIManager;
+import com.example.fitfeed.util.TokenManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -172,11 +174,28 @@ public class CameraActivity extends AppCompatActivity {
         String filename = ((Integer) imageView.getTag() != R.drawable.ic_launcher_foreground) ? imageFile.getAbsolutePath() : null;
         Workout workout = selectedWorkout != null ? selectedWorkout : null;
 
-        Post finalPost = new Post(editText.getText().toString(), "alexholt", filename, workout);
+        Post finalPost = new Post(editText.getText().toString(), TokenManager.getUsername(), filename, workout);
 
         postIntent.putExtra("post", finalPost);
 
-        APIManager.makePost(finalPost, view.getContext());
+        APIManager.makePost(finalPost, this, success -> {
+            switch (success) {
+                case -1: {
+                    Log.e("MakePost", "Error");
+                    break;
+                }
+
+                case 0: {
+                    Log.e("MakePost", "Fail");
+                    break;
+                }
+
+                case 1: {
+                    Log.e("MakePost", "Success");
+                    break;
+                }
+            }
+        });
 
         setResult(CameraActivity.RESULT_OK, postIntent);
         finish();
