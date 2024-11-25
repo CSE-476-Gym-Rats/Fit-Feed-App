@@ -5,6 +5,8 @@ import android.content.Context;
 import android.util.JsonReader;
 import android.util.Log;
 
+import androidx.lifecycle.MutableLiveData;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -275,6 +277,59 @@ public class APIManager {
                 callback.onWorkoutResult(finalStatusCode);
             });
         });
+    }
+
+    public static MutableLiveData<List<Workout>> GetWorkouts()
+    {
+        MutableLiveData<List<Workout>> liveData = new MutableLiveData<>();  // workouts to load
+        executorService.submit(() -> {
+            int statusCode = 0; // Default to failure
+
+            try
+            {
+                URL url = new URL(API_URL + PULL_WORKOUTS_ENDPOINT);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
+                String user = TokenManager.getAccessToken();
+                conn.setRequestProperty("Authorization", "Bearer " + user);
+
+                int responseCode = conn.getResponseCode();
+                if(responseCode == HttpURLConnection.HTTP_OK)
+                {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    String line;
+                    StringBuilder response = new StringBuilder();
+
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                    in.close();
+
+                    String json = response.toString();
+                    List<Workout> workouts = parseWorkouts(json);
+                    liveData.postValue(workouts);
+
+                    statusCode = 1;
+                }
+
+            } catch (Exception e) {
+                Log.e("TAG", e.toString());
+                statusCode = -1;
+            }
+
+        });
+
+        return liveData;
+    }
+
+    private static List<Workout> parseWorkouts(String json) {
+
+        Gson gson = new Gson();
+        Workout[] workouts = gson.fromJson(json, Workout[].class);
+        ArrayList<Workout> result = new ArrayList<>(List.of(workouts));
+
+        return result;
     }
 
     /**

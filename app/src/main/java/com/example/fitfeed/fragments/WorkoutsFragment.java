@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,10 +19,12 @@ import com.example.fitfeed.R;
 import com.example.fitfeed.activities.NewWorkoutActivity;
 import com.example.fitfeed.adapters.WorkoutsRecyclerViewAdapter;
 import com.example.fitfeed.models.Workout;
+import com.example.fitfeed.util.APIManager;
 import com.example.fitfeed.util.FileManager;
 import com.example.fitfeed.adapters.PostsRecyclerViewAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,12 +89,26 @@ public class WorkoutsFragment extends Fragment {
     }
 
     private void loadWorkouts() {
-        try {
-            List<Workout> workouts = FileManager.loadWorkouts(getContext());
-            WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(getContext(), workouts);
-            workoutRecyclerView.setAdapter(adapter);
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "Error loading workouts.", Toast.LENGTH_SHORT).show();
-        }
+        // Live data: API request takes a second, so it will auto update once the response comes in from the server
+        MutableLiveData<List<Workout>> liveData = APIManager.GetWorkouts();
+        liveData.observe(getViewLifecycleOwner(), workouts ->{
+            if(!workouts.isEmpty())
+            {
+                WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(getContext(), workouts);
+                workoutRecyclerView.setAdapter(adapter);
+            }
+            else
+            {
+                Toast.makeText(getContext(), "Error loading workouts.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //try {
+        //    List<Workout> workouts = FileManager.loadWorkouts(getContext());
+        //    WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(getContext(), workouts);
+        //    workoutRecyclerView.setAdapter(adapter);
+        //} catch (Exception e) {
+        //    Toast.makeText(getContext(), "Error loading workouts.", Toast.LENGTH_SHORT).show();
+        // }
     }
 }
