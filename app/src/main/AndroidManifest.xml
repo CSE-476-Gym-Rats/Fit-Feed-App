@@ -46,6 +46,14 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
+        <meta-data
+            android:name="CLOUDINARY_URL"
+            android:value="cloudinary://@fitfeed-image-repo" />
+        <service
+            android:name="com.example.fitfeed.util.CloudinaryListener" />
+        <meta-data
+            android:name="cloudinaryCallbackService"
+            android:value="com.example.fitfeed.util.CloudinaryListener" />
 
         <activity
             android:name=".activities.GymSelectorMapsActivity"

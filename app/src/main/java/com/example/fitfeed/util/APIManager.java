@@ -244,12 +244,12 @@ public class APIManager {
         Workout w4 = new Workout();
         w4.addExercise("lazy", 10, 0, 15f);
 
-        PostWorkout("friend1", "just did my first workout!", w1, null);
-        PostWorkout("friend1", "just benched 150!", w3, null);
-        PostWorkout("friend20", "Leg day today", w2, null);
+        PostWorkout("friend1", "just did my first workout!", w1, null, null);
+        PostWorkout("friend1", "just benched 150!", w3, null, null);
+        PostWorkout("friend20", "Leg day today", w2, null, null);
 
         // Non-friend
-        PostWorkout("friend0", "Not friend testing", w4, null);
+        PostWorkout("friend0", "Not friend testing", w4, null, null);
     }
 
     /**
@@ -299,13 +299,13 @@ public class APIManager {
      * @param text the post's text
      * @param workout workout that goes with the post
      */
-    public static void PostWorkout(String user, String text, Workout workout, String img) {
+    public static void PostWorkout(String user, String text, Workout workout, String img, String imgUrl) {
         // create a Post that includes a workout, sample user ID/username, and text
         //String user = TokenManager.getAccessToken();
 
         // todo: add image support to post
 
-        Post newPost = new Post(text, user, img, workout);
+        Post newPost = new Post(text, user, img, imgUrl, workout);
 
         // add post to test dictionary (will be database when friends implemented)
         if (testPosts.get(user) != null) {

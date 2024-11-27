@@ -33,6 +33,7 @@ public class GsonHelper {
                     jsonObject.get("postText").getAsString(),
                     jsonObject.get("postUser").getAsString(),
                     jsonObject.get("postFilename").getAsString(),
+                    jsonObject.get("postImageUrl").getAsString(),
                     workout
             );
         }
