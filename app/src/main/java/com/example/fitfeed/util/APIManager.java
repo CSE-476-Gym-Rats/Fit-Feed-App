@@ -1,7 +1,6 @@
 package com.example.fitfeed.util;
 
 import android.content.Context;
-import android.util.JsonReader;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -9,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -16,14 +16,12 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.UUID;
 
 import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.models.Post;
-import com.google.gson.Gson;
 //import com.example.fitfeed.util.TokenManager;
 
 /**
@@ -52,7 +50,7 @@ public class APIManager {
      * @param callback
      * returns -1 for a connection error, 0 for a failed login, and 1 for a success
      */
-    public static void Login(String username, String password, Context context, LoginCallback callback) {
+    public static void Login(String username, String password, Context context, APICallback callback) {
         executorService.submit(() -> {
             int statusCode = 0; // Default to failure
 
@@ -97,17 +95,73 @@ public class APIManager {
 
             int finalStatusCode = statusCode;
             new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-                callback.onLoginResult(finalStatusCode);
+                callback.onResult(finalStatusCode);
             });
         });
     }
 
     /**
      * Send a register request
+     * @param firstName
+     * @param lastName
+     * @param username
+     * @param email
+     * @param password
+     * @param context
+     * @param callback
+     * returns -1 for a connection error, 0 for a failed registration, and 1 for a success
      */
-    public static Boolean Register() {
-        return true;
+    public static void Register(String firstName, String lastName, String username, String email, String password, Context context, APICallback callback) {
+        executorService.submit(() -> {
+            int statusCode = 0; // Default to failure
+
+            try {
+                URL url = new URL(API_URL + REGISTER_ENDPOINT);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+
+                JSONObject payload = new JSONObject();
+                payload.put("firstName", firstName);
+                payload.put("lastName", lastName);
+                payload.put("username", username);
+                payload.put("email", email);
+                payload.put("enabled", true);
+
+                JSONArray credentialsArray = new JSONArray();
+                JSONObject credentials = new JSONObject();
+                credentials.put("type", "password");
+                credentials.put("value", password);
+                credentials.put("temporary", false);
+                credentialsArray.put(credentials);
+
+                payload.put("credentials", credentialsArray);
+
+                conn.setDoOutput(true);
+                try (OutputStream os = conn.getOutputStream()) {
+                    os.write(payload.toString().getBytes("UTF-8"));
+                }
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Registration successful
+                    statusCode = 1;
+                } else {
+                    // Registration failed
+                    statusCode = 0;
+                }
+            } catch (Exception e) {
+                Log.e("Register", "Error during registration", e);
+                statusCode = -1; // Connection error
+            }
+
+            int finalStatusCode = statusCode;
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                callback.onResult(finalStatusCode);
+            });
+        });
     }
+
 
 
     // Temporary testing lines. Friends are not implemented, so I have no way to test getting posts from friends
