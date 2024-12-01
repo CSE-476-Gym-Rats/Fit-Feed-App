@@ -1,7 +1,6 @@
 package com.example.fitfeed.util;
 
 import android.content.Context;
-import android.util.JsonReader;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -15,19 +14,13 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.UUID;
 
-import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.models.Post;
 import com.google.gson.Gson;
-//import com.example.fitfeed.util.TokenManager;
 
 /**
  * util for making API calls
