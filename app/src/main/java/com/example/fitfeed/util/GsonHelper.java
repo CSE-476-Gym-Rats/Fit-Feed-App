@@ -29,11 +29,14 @@ public class GsonHelper {
             JsonElement workoutJson = jsonObject.get("postWorkout");
             Workout workout = (workoutJson != null) ? new Gson().fromJson(workoutJson.getAsJsonObject(), Workout.class) : null;
 
+            JsonElement postFilenameJson = jsonObject.get("postFilename");
+            JsonElement postImageUrlJson = jsonObject.get("postImageUrl");
+
             return new Post(
                     jsonObject.get("postText").getAsString(),
                     jsonObject.get("postUser").getAsString(),
-                    jsonObject.get("postFilename").getAsString(),
-                    jsonObject.get("postImageUrl").getAsString(),
+                    (postFilenameJson != null) ? postFilenameJson.getAsString() : null,
+                    (postImageUrlJson != null) ? postImageUrlJson.getAsString() : null,
                     workout
             );
         }

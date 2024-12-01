@@ -2,6 +2,7 @@
 #noinspection AndroidGradlePluginVersion
 agp = "8.6.0"
 cloudinaryAndroid = "3.0.2"
+compiler = "4.14.2"
 desugar_jdk_libs = "2.1.2"
 glide = "4.16.0"
 gson = "2.11.0"
@@ -25,6 +26,7 @@ securityCrypto = "1.0.0"
 cloudinary-android = { module = "com.cloudinary:cloudinary-android", version.ref = "cloudinaryAndroid" }
 cloudinary-android-download = { module = "com.cloudinary:cloudinary-android-download", version.ref = "cloudinaryAndroid" }
 cloudinary-android-preprocess = { module = "com.cloudinary:cloudinary-android-preprocess", version.ref = "cloudinaryAndroid" }
+compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }

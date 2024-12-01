@@ -46,9 +46,6 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Setup Cloudinary service
-        CloudinaryHelper.setMediaManager(getApplicationContext());    // todo add photo upload
-
         // Setup bottom nav view
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.nav_bar_feed);
