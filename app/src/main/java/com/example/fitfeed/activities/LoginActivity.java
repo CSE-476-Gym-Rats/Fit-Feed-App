@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private CheckBox rememberMeCheckBox;
     private Button loginButton;
+    private Button registerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +44,13 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.editTextPassword);
         rememberMeCheckBox = findViewById(R.id.rememberMe);
         loginButton = findViewById(R.id.buttonLogin);
+        registerButton = findViewById(R.id.buttonSignUp);
 
         loginButton.setOnClickListener(this::login);
+        registerButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        });
 
         // Check if credentials are saved
         String savedUsername = TokenManager.getUsername();

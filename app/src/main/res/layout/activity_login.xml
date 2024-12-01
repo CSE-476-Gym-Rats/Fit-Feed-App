@@ -112,6 +112,19 @@
         app:layout_constraintTop_toBottomOf="@+id/rememberMe"
         tools:ignore="TextContrastCheck" />
 
+    <Button
+        android:id="@+id/buttonSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#F0765C"
+        android:text="@string/sign_up"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonLogin"
+        tools:ignore="TextContrastCheck" />
+
     <ImageView
         android:id="@+id/logo"
         android:layout_width="0dp"

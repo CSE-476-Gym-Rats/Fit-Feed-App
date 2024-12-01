@@ -59,4 +59,14 @@
     <string name="PULL_WORKOUTS_ENDPOINT">/workouts</string>
     <string name="incorrect_username_or_password">Incorrect username or password</string>
     <string name="connection_error">Error connecting to server. Please check internet connection and try again.</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_account">Create Account</string>
+    <string name="email">Email</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="successfully_created_account">Successfully created account</string>
+    <string name="username_already_in_use">Email or username already in use</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="missing_required_field">Missing required field</string>
 </resources>
