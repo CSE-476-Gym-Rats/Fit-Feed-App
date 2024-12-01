@@ -70,27 +70,29 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
         holder.textView.setText(posts.get(position).getPostText());
         holder.imageView.setImageDrawable(posts.get(position).getPostDrawable());
         Workout postWorkout = posts.get(position).getPostWorkout();
-        List<Workout.Exercise> exercises = postWorkout.getExercises();
-        String formattedText = "Workout exercises:\n";
+        if (postWorkout != null) {
+            List<Workout.Exercise> exercises = postWorkout.getExercises();
+            String formattedText = "Workout exercises:\n";
 
-        for (Workout.Exercise exercise : exercises) {
-            String formattedExercise = String.format(
-                    "%s, %d sets, %d reps, weight: %f\n",
-                    exercise.getName(),
-                    exercise.getSets(),
-                    exercise.getReps(),
-                    exercise.getWeight()
+            for (Workout.Exercise exercise : exercises) {
+                String formattedExercise = String.format(
+                        "%s, %d sets, %d reps, weight: %f\n",
+                        exercise.getName(),
+                        exercise.getSets(),
+                        exercise.getReps(),
+                        exercise.getWeight()
+                );
+                formattedText = formattedText + formattedExercise;
+            }
+
+            holder.textView2.setText(
+                    /*String.format(
+                            FitFeedApp.getContext().getResources().getString(R.string.post_workout_json_format),
+                            GsonHelper.getGson().toJson(posts.get(position).getPostWorkout())
+                    )*/
+                    formattedText
             );
-            formattedText = formattedText + formattedExercise;
         }
-
-        holder.textView2.setText(
-                /*String.format(
-                        FitFeedApp.getContext().getResources().getString(R.string.post_workout_json_format),
-                        GsonHelper.getGson().toJson(posts.get(position).getPostWorkout())
-                )*/
-                formattedText
-        );
     }
 
     @Override
