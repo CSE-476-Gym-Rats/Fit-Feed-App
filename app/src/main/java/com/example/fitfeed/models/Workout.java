@@ -1,5 +1,8 @@
 package com.example.fitfeed.models;
 
+import com.example.fitfeed.models.dto.ExerciseDto;
+import com.example.fitfeed.models.dto.WorkoutDto;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +15,12 @@ public class Workout {
     private String workoutName;
 
     public Workout() {}
+
+    public Workout(List<Exercise> exercises, long timestamp, String workoutName) {
+        this.exercises = exercises;
+        this.timestamp = timestamp;
+        this.workoutName = workoutName;
+    }
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
@@ -70,5 +79,19 @@ public class Workout {
         public float getWeight() {
             return weight;
         }
+
+        public static Exercise fromDto(ExerciseDto dto) {
+            return new Exercise(dto.exerciseName, dto.sets, dto.reps, dto.weight);
+        }
+    }
+
+    public static Workout fromDto(WorkoutDto dto) {
+        ArrayList<Exercise> exercises = new ArrayList<>();
+        if (dto.exercises != null) {
+            dto.exercises.forEach(exerciseDto -> {
+                exercises.add(Exercise.fromDto(exerciseDto));
+            });
+        }
+        return new Workout(exercises, dto.workoutTimestamp, dto.workoutName);
     }
 }

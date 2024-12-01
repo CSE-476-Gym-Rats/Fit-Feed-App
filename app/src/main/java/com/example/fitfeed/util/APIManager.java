@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.UUID;
 
 import com.example.fitfeed.models.Post;
+import com.example.fitfeed.models.dto.PostDto;
 import com.google.gson.Gson;
 
 /**
@@ -209,8 +210,13 @@ public class APIManager {
      */
     private static List<Post> parsePosts(String json) {
         Gson gson = new Gson();
-        Post[] posts = gson.fromJson(json, Post[].class);
-        ArrayList<Post> result = new ArrayList<>(List.of(posts));
+        PostDto[] posts = gson.fromJson(json, PostDto[].class);
+        ArrayList<Post> result = new ArrayList<>();
+        if (posts != null) {
+            for (PostDto post : posts) {
+                result.add(Post.fromDto(post));
+            }
+        }
         return result;
     }
 
@@ -236,7 +242,7 @@ public class APIManager {
                 //StringBuilder postsJson = new StringBuilder();
 
                 String jsonInputString = String.format("{\"usedId\": \"%s\", \"postText\": \"%s\", \"workoutId\": \"%d\", \"imageUri\": \"%s\"}",
-                        "TestUser1", post.getPostText(), 1L, "workout placeholder");
+                        "TestUser1", post.getPostText(), 1L, post.getPostImageUrl());
 
                 conn.setDoOutput(true);
                 conn.getOutputStream().write(jsonInputString.getBytes(StandardCharsets.UTF_8));

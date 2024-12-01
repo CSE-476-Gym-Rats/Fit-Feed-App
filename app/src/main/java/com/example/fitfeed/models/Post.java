@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.fitfeed.FitFeedApp;
+import com.example.fitfeed.models.dto.PostDto;
 import com.example.fitfeed.util.GsonHelper;
 import com.google.gson.Gson;
 
@@ -158,5 +159,14 @@ public class Post implements Parcelable {
         dest.writeString(this.postFilename);
         dest.writeString(this.postImageUrl);
         dest.writeString(GsonHelper.getGson().toJson(this.postWorkout));
+    }
+
+    public static Post fromDto(PostDto dto) {
+        return new Post(
+                dto.postText,
+                dto.userId.toString(),
+                null,
+                dto.imageUri,
+                (dto.workout != null) ? Workout.fromDto(dto.workout) : null);
     }
 }
