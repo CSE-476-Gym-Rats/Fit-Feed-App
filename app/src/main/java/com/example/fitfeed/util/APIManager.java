@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -61,7 +62,7 @@ public class APIManager {
                 // Create JSON payload
                 String jsonInputString = String.format("{\"username\": \"%s\", \"password\": \"%s\"}", username, password);
                 conn.setDoOutput(true);
-                conn.getOutputStream().write(jsonInputString.getBytes("UTF-8"));
+                conn.getOutputStream().write(jsonInputString.getBytes(StandardCharsets.UTF_8));
 
                 int responseCode = conn.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -137,7 +138,7 @@ public class APIManager {
 
                 conn.setDoOutput(true);
                 try (OutputStream os = conn.getOutputStream()) {
-                    os.write(payload.toString().getBytes("UTF-8"));
+                    os.write(payload.toString().getBytes(StandardCharsets.UTF_8));
                 }
 
                 int responseCode = conn.getResponseCode();
@@ -238,7 +239,7 @@ public class APIManager {
                         "TestUser1", post.getPostText(), 1L, "workout placeholder");
 
                 conn.setDoOutput(true);
-                conn.getOutputStream().write(jsonInputString.getBytes("UTF-8"));
+                conn.getOutputStream().write(jsonInputString.getBytes(StandardCharsets.UTF_8));
                 int responseCode = conn.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
                     statusCode = 1;

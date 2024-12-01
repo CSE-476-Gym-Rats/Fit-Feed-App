@@ -1,7 +1,6 @@
 package com.example.fitfeed.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,16 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.fitfeed.FitFeedApp;
 import com.example.fitfeed.R;
 import com.example.fitfeed.models.Post;
 import com.example.fitfeed.models.Workout;
-import com.example.fitfeed.util.GsonHelper;
-import com.example.fitfeed.util.ResourceHelpers;
 
 import java.util.ArrayList;
 import java.util.List;

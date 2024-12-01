@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.cloudinary.android.MediaManager;
 import com.example.fitfeed.R;
 import com.example.fitfeed.models.Post;
 import com.example.fitfeed.fragments.FeedFragment;
