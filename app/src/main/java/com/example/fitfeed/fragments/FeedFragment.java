@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +24,7 @@ import com.example.fitfeed.activities.FriendsActivity;
 import com.example.fitfeed.models.Post;
 import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.util.FileManager;
+import com.example.fitfeed.util.APIManager;
 import com.example.fitfeed.adapters.PostsRecyclerViewAdapter;
 import com.example.fitfeed.R;
 
@@ -43,6 +45,10 @@ public class FeedFragment extends Fragment {
     private PostsRecyclerViewAdapter postsRecyclerViewAdapter;
     private RecyclerView recyclerView;
     private ArrayList<Post> posts;
+
+    public ArrayList<Post> getPostsList() {
+        return posts;
+    }
 
     public FeedFragment() {}
 
@@ -113,7 +119,7 @@ public class FeedFragment extends Fragment {
             if (data != null) {
                 Post newPost = data.getParcelableExtra("post");
                 if (newPost != null) {
-                    if (!newPost.getPostUser().isEmpty() || !newPost.getPostText().isEmpty() || newPost.getPostDrawable() != null) {
+                    if (newPost.getPostUser() != null || newPost.getPostText() != null || newPost.getPostDrawable() != null) {
                         postsRecyclerViewAdapter.addPost(newPost);
                         posts = postsRecyclerViewAdapter.getPosts();
                         postsLayoutManager.scrollToPositionWithOffset(0, 0);
@@ -167,12 +173,24 @@ public class FeedFragment extends Fragment {
     }
 
     private void loadPosts() {
-        try {
+        MutableLiveData<List<Post>> liveData = APIManager.getPosts();
+        liveData.observe(getViewLifecycleOwner(), postsObserver ->{
+            if(!postsObserver.isEmpty())
+            {
+                PostsRecyclerViewAdapter adapter = new PostsRecyclerViewAdapter(getContext(), postsObserver);
+                recyclerView.setAdapter(adapter);
+            }
+            else
+            {
+                Toast.makeText(getContext(), "Error loading posts.", Toast.LENGTH_SHORT).show();
+            }
+        });
+        /*try {
             List<Workout> workouts = FileManager.loadWorkouts(getContext());
             PostsRecyclerViewAdapter adapter = new PostsRecyclerViewAdapter(getContext(), posts);
             recyclerView.setAdapter(adapter);
         } catch (Exception e) {
             Toast.makeText(getContext(), "Error loading posts.", Toast.LENGTH_SHORT).show();
-        }
+        }*/
     }
 }

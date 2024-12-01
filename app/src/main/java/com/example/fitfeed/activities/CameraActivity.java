@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,13 +45,16 @@ import com.example.fitfeed.util.CloudinaryCallback;
 import com.example.fitfeed.util.CloudinaryListener;
 import com.example.fitfeed.util.FileManager;
 import com.example.fitfeed.util.APIManager;
+import com.example.fitfeed.util.TokenManager;
 import com.example.fitfeed.util.GsonHelper;
 import com.example.fitfeed.util.ImageManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.example.fitfeed.util.TokenManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.text.NumberFormat;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -257,11 +261,28 @@ public class CameraActivity extends AppCompatActivity {
         String filename = ((Integer) imageView.getTag() != R.drawable.ic_launcher_foreground) ? imageFile.getAbsolutePath() : null;
         Workout workout = selectedWorkout != null ? selectedWorkout : null;
 
-        Post finalPost = new Post(editText.getText().toString(), "alexholt", filename, receivedUrl, workout);
+        Post finalPost = new Post(editText.getText().toString(), TokenManager.getUsername(), filename, receivedUrl, workout);
 
         postIntent.putExtra("post", finalPost);
 
-        APIManager.makePost(finalPost, view.getContext());
+        APIManager.makePost(finalPost, this, success -> {
+            switch (success) {
+                case -1: {
+                    Log.e("MakePost", "Error");
+                    break;
+                }
+
+                case 0: {
+                    Log.e("MakePost", "Fail");
+                    break;
+                }
+
+                case 1: {
+                    Log.e("MakePost", "Success");
+                    break;
+                }
+            }
+        });
 
         setResult(CameraActivity.RESULT_OK, postIntent);
         Log.d("CameraActivity.savePost", "Post Saved! (" + GsonHelper.getGson().toJson(finalPost) + ")");
