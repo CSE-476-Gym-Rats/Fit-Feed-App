@@ -19,7 +19,7 @@ public class GsonHelper {
 
     /**
      * Custom deserializer for {@link Post} class to allow rebuilding the transient drawable on deserialization.
-     * @implNote Calls constructor {@link Post#Post(String, String, String, Workout)} on deserialization.
+     * @implNote Calls constructor {@link Post#Post(String, String, String, String, Workout)} on deserialization.
      */
     static class PostDeserializer implements JsonDeserializer<Post> {
         @Override
