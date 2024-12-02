@@ -69,7 +69,7 @@ public class FriendsActivity extends AppCompatActivity {
                 } else if (statusCode == -1) {
                     Toast.makeText(FriendsActivity.this, "Failed to add friend. Check your connection.", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(FriendsActivity.this, "An error occurred. Please try again.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FriendsActivity.this, "Unable to add friend: User does not exist", Toast.LENGTH_SHORT).show();
                 }
             }
         });
