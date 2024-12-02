@@ -1,5 +1,6 @@
 package com.example.fitfeed.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.UUID;
 
 import com.example.fitfeed.models.Post;
+import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.models.dto.PostDto;
 import com.google.gson.Gson;
 
@@ -33,6 +35,7 @@ public class APIManager {
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();  // Use a single-thread executor for simplicity
 
     static final String API_URL = "http://api.fitfeed.online:8081";
+    //static final String API_URL = "http://10.0.2.2:8081";
     static final String LOGIN_ENDPOINT = "/login";
     static final String REGISTER_ENDPOINT = "/register";
     static final String ADD_WORKOUT_ENDPOINT = "/workout";
@@ -262,4 +265,104 @@ public class APIManager {
         });
     }
 
+    @SuppressLint("DefaultLocale")
+    public static void addWorkout(Workout workout, Context context, APICallback callback) {
+        executorService.submit(() -> {
+            int statusCode = 0; // Default to failure
+
+            try {
+                URL url = new URL(API_URL + ADD_WORKOUT_ENDPOINT);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                String user = TokenManager.getAccessToken();
+                conn.setRequestProperty("Authorization", "Bearer " + user);
+                // Create JSON payload
+
+                // Build exercise json string first
+                StringBuilder exercisesJson = new StringBuilder();
+                for (Workout.Exercise exercise : workout.getExercises()) {
+                    // If not first
+                    if (exercisesJson.length() > 0) {
+                        exercisesJson.append(", ");
+                    }
+
+                    exercisesJson.append(String.format("{\"exerciseName\": \"%s\", \"sets\": %d, \"reps\": %d, \"weight\": %.1f}",
+                            exercise.getName(), exercise.getSets(), exercise.getReps(), exercise.getWeight()));
+                }
+                String jsonInputString = String.format("{\"workoutName\": \"%s\", \"workoutTimestamp\": %d, \"exercises\": [%s]}",
+                        workout.getWorkoutName(), workout.getTimestamp(), exercisesJson
+                );
+
+                conn.setDoOutput(true);
+                conn.getOutputStream().write(jsonInputString.getBytes(StandardCharsets.UTF_8));
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
+                    statusCode = 1;
+                }
+            } catch (Exception e) {
+                Log.e("TAG", e.toString());
+                statusCode = -1;
+            }
+
+            int finalStatusCode = statusCode;
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                callback.onResult(finalStatusCode);
+            });
+        });
+    }
+
+    public static MutableLiveData<List<Workout>> GetWorkouts()
+    {
+        MutableLiveData<List<Workout>> liveData = new MutableLiveData<>();  // workouts to load
+        executorService.submit(() -> {
+            int statusCode = 0; // Default to failure
+
+            try
+            {
+                URL url = new URL(API_URL + PULL_WORKOUTS_ENDPOINT);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
+                String user = TokenManager.getAccessToken();
+                conn.setRequestProperty("Authorization", "Bearer " + user);
+
+                int responseCode = conn.getResponseCode();
+                if(responseCode == HttpURLConnection.HTTP_OK)
+                {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    String line;
+                    StringBuilder response = new StringBuilder();
+
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                    in.close();
+
+                    String json = response.toString();
+                    List<Workout> workouts = parseWorkouts(json);
+                    liveData.postValue(workouts);
+
+                    statusCode = 1;
+                }
+
+            } catch (Exception e) {
+                Log.e("WORKOUTS: GET FAILED", e.toString());
+                statusCode = -1;
+            }
+
+        });
+
+        return liveData;
+    }
+
+    private static List<Workout> parseWorkouts(String json) {
+
+        Gson gson = new Gson();
+        Workout[] workouts = gson.fromJson(json, Workout[].class);
+        ArrayList<Workout> result = new ArrayList<>(List.of(workouts));
+
+        return result;
+    }
 }

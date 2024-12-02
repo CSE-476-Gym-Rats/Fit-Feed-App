@@ -3,6 +3,8 @@ package com.example.fitfeed.models;
 import com.example.fitfeed.models.dto.ExerciseDto;
 import com.example.fitfeed.models.dto.WorkoutDto;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import java.util.List;
  */
 public class Workout {
     private List<Exercise> exercises = new ArrayList<>();
+    @SerializedName("workoutTimestamp")
     private long timestamp;
     private String workoutName;
 
@@ -50,6 +53,7 @@ public class Workout {
      * Class to model an individual exercise
      */
     public static class Exercise {
+        @SerializedName("exerciseName")
         private String name;
         private int sets;
         private int reps;
