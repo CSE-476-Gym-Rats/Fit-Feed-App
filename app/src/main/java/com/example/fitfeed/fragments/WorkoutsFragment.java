@@ -91,7 +91,7 @@ public class WorkoutsFragment extends Fragment {
     private void loadWorkouts() {
         // Live data: API request takes a second, so it will auto update once the response comes in from the server
         MutableLiveData<List<Workout>> liveData = APIManager.GetWorkouts();
-        liveData.observe(getViewLifecycleOwner(), workouts ->{
+        liveData.observe(getViewLifecycleOwner(), workouts -> {
             if(!workouts.isEmpty())
             {
                 WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(getContext(), workouts);

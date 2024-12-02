@@ -3,8 +3,10 @@ package com.example.fitfeed;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.fitfeed.activities.MainActivity;
+import com.example.fitfeed.util.CloudinaryHelper;
 import com.example.fitfeed.util.TokenManager;
 
 public class FitFeedApp extends Application {
@@ -20,8 +22,10 @@ public class FitFeedApp extends Application {
 
     @Override
     public void onCreate() {
+        Log.d("FitFeedApp.onCreate", "onCreate running");
         instance = this;
         clearPosts();   // todo comment out
+        CloudinaryHelper.setMediaManager(this);
         TokenManager.init(this);
         super.onCreate();
     }

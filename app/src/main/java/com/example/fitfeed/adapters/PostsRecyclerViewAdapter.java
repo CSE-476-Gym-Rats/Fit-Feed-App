@@ -1,7 +1,7 @@
 package com.example.fitfeed.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fitfeed.FitFeedApp;
+import com.bumptech.glide.Glide;
 import com.example.fitfeed.R;
 import com.example.fitfeed.models.Post;
 import com.example.fitfeed.models.Workout;
-import com.example.fitfeed.util.GsonHelper;
-import com.example.fitfeed.util.ResourceHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,29 +65,39 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
     public void onBindViewHolder(ViewHolder holder, int position) {
         // set text and drawable for each post
         holder.textView.setText(posts.get(position).getPostText());
-        holder.imageView.setImageDrawable(posts.get(position).getPostDrawable());
-        Workout postWorkout = posts.get(position).getPostWorkout();
-        List<Workout.Exercise> exercises = postWorkout.getExercises();
-        String formattedText = "Workout exercises:\n";
-
-        for (Workout.Exercise exercise : exercises) {
-            String formattedExercise = String.format(
-                    "%s, %d sets, %d reps, weight: %f\n",
-                    exercise.getName(),
-                    exercise.getSets(),
-                    exercise.getReps(),
-                    exercise.getWeight()
-            );
-            formattedText = formattedText + formattedExercise;
+        if (posts.get(position).getPostImageUrl() != null) {
+            Log.d("PostsRecyclerViewAdapter.onBindViewHolder", "Loading post image from url.");
+            Glide.with(inflater.getContext())
+                    .load(posts.get(position).getPostImageUrl())
+                    .into(holder.imageView);
+        } else {
+            Log.d("PostsRecyclerViewAdapter.onBindViewHolder", "Loading post image from filename.");
+            holder.imageView.setImageDrawable(posts.get(position).getPostDrawable());
         }
+        Workout postWorkout = posts.get(position).getPostWorkout();
+        if (postWorkout != null) {
+            List<Workout.Exercise> exercises = postWorkout.getExercises();
+            String formattedText = "Workout exercises:\n";
 
-        holder.textView2.setText(
-                /*String.format(
-                        FitFeedApp.getContext().getResources().getString(R.string.post_workout_json_format),
-                        GsonHelper.getGson().toJson(posts.get(position).getPostWorkout())
-                )*/
-                formattedText
-        );
+            for (Workout.Exercise exercise : exercises) {
+                String formattedExercise = String.format(
+                        "%s, %d sets, %d reps, weight: %f\n",
+                        exercise.getName(),
+                        exercise.getSets(),
+                        exercise.getReps(),
+                        exercise.getWeight()
+                );
+                formattedText = formattedText + formattedExercise;
+            }
+
+            holder.textView2.setText(
+                    /*String.format(
+                            FitFeedApp.getContext().getResources().getString(R.string.post_workout_json_format),
+                            GsonHelper.getGson().toJson(posts.get(position).getPostWorkout())
+                    )*/
+                    formattedText
+            );
+        }
     }
 
     @Override

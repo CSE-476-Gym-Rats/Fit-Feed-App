@@ -1,8 +1,10 @@
 package com.example.fitfeed.activities;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.camera2.CameraAccessException;
@@ -11,12 +13,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -28,6 +33,7 @@ import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.fitfeed.FitFeedApp;
 import com.example.fitfeed.R;
@@ -35,12 +41,23 @@ import com.example.fitfeed.adapters.WorkoutsSpinnerArrayAdapter;
 import com.example.fitfeed.models.Post;
 import com.example.fitfeed.fragments.FeedFragment;
 import com.example.fitfeed.models.Workout;
+import com.example.fitfeed.util.CloudinaryCallback;
+import com.example.fitfeed.util.CloudinaryListener;
 import com.example.fitfeed.util.FileManager;
 import com.example.fitfeed.util.APIManager;
+import com.example.fitfeed.util.TokenManager;
+import com.example.fitfeed.util.GsonHelper;
+import com.example.fitfeed.util.ImageManager;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.example.fitfeed.util.TokenManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.text.NumberFormat;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -52,6 +69,12 @@ public class CameraActivity extends AppCompatActivity {
     private Spinner workoutSpinner;
     private WorkoutsSpinnerArrayAdapter spinnerAdapter;
     private Workout selectedWorkout;
+    private BroadcastReceiver snackbarReceiver;
+    private BroadcastReceiver urlReceiver;
+    private Snackbar snackbar;
+//    ProgressBar progressBar;
+    private boolean waitForUrl = false;
+    private String receivedUrl;
 
     public static final int RESULT_OK = 0;
 
@@ -65,6 +88,57 @@ public class CameraActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        snackbarReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (snackbar == null) {
+                    snackbar = Snackbar.make(findViewById(R.id.mainCameraContainer), "Uploading: 0%", Snackbar.LENGTH_INDEFINITE);
+//                    ViewGroup contentLay = (ViewGroup) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text).getParent();
+//                    contentLay.addView(progressBar,0);
+                }
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    if (extras.containsKey(CloudinaryListener.EXTRA_START_MESSAGE)) {
+                        snackbar.setText(extras.getString(CloudinaryListener.EXTRA_START_MESSAGE));
+                        snackbar.setDuration(Snackbar.LENGTH_INDEFINITE);
+                        snackbar.show();
+                        waitForUrl = true;
+                    } else if (extras.containsKey(CloudinaryListener.EXTRA_PROGRESS_MESSAGE)) {
+                        snackbar.setText(extras.getString(CloudinaryListener.EXTRA_PROGRESS_MESSAGE));
+//                        progressBar.setProgress(extras.getInt(CloudinaryListener.EXTRA_PROGRESS_VALUE));
+                        snackbar.show();
+                    } else if (extras.containsKey(CloudinaryListener.EXTRA_ERROR_MESSAGE)) {
+                        snackbar.setText(extras.getString(CloudinaryListener.EXTRA_ERROR_MESSAGE));
+                        snackbar.setDuration(Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                        waitForUrl = false;
+                    } else if (extras.containsKey(CloudinaryListener.EXTRA_SUCCESS_MESSAGE)) {
+                        if (!snackbar.isShown()) {
+                            snackbar.show();
+                        }
+                        snackbar.setText(extras.getString(CloudinaryListener.EXTRA_SUCCESS_MESSAGE));
+//                        progressBar.setProgress(100);
+                        snackbar.setDuration(Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                        waitForUrl = false;
+                    }
+                }
+            }
+        };
+
+        urlReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    if (extras.containsKey(CloudinaryListener.EXTRA_SUCCESS_URL)) {
+                        receivedUrl = extras.getString(CloudinaryListener.EXTRA_SUCCESS_URL);
+                        waitForUrl = false;
+                    }
+                }
+            }
+        };
 
         // find take picture button and set listener
         Button takePictureButton = findViewById(R.id.cameraActivityTakePictureButton);
@@ -104,6 +178,14 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(snackbarReceiver, new IntentFilter(CloudinaryListener.ACTION_SNACKBAR));
+        LocalBroadcastManager.getInstance(this).registerReceiver(urlReceiver, new IntentFilter(CloudinaryListener.ACTION_URL));
+
+    }
+
     private AdapterView.OnItemSelectedListener getWorkoutSelected() {
         return new AdapterView.OnItemSelectedListener() {
             @Override
@@ -126,9 +208,11 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void bitmapFromImageFile() {
-        Bitmap image = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+        String absPath = imageFile.getAbsolutePath();
+        Bitmap image = BitmapFactory.decodeFile(absPath);
         imageView.setImageBitmap(image);
         imageView.setTag(imageFile.hashCode());
+        ImageManager.uploadImage(absPath);
     }
 
 
@@ -167,18 +251,41 @@ public class CameraActivity extends AppCompatActivity {
      * @param view context of click event.
      */
     private void savePost(View view) {
+        if (waitForUrl) {
+            Toast.makeText(CameraActivity.this, "Please wait for image upload to complete!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Intent postIntent = new Intent(view.getContext(), FeedFragment.class);
         EditText editText = findViewById(R.id.cameraActivityEditText);
         String filename = ((Integer) imageView.getTag() != R.drawable.ic_launcher_foreground) ? imageFile.getAbsolutePath() : null;
         Workout workout = selectedWorkout != null ? selectedWorkout : null;
 
-        Post finalPost = new Post(editText.getText().toString(), "alexholt", filename, workout);
+        Post finalPost = new Post(editText.getText().toString(), TokenManager.getUsername(), filename, receivedUrl, workout);
 
         postIntent.putExtra("post", finalPost);
 
-        APIManager.makePost(finalPost, view.getContext());
+        APIManager.makePost(finalPost, this, success -> {
+            switch (success) {
+                case -1: {
+                    Log.e("MakePost", "Error");
+                    break;
+                }
+
+                case 0: {
+                    Log.e("MakePost", "Fail");
+                    break;
+                }
+
+                case 1: {
+                    Log.e("MakePost", "Success");
+                    break;
+                }
+            }
+        });
 
         setResult(CameraActivity.RESULT_OK, postIntent);
+        Log.d("CameraActivity.savePost", "Post Saved! (" + GsonHelper.getGson().toJson(finalPost) + ")");
         finish();
     }
 

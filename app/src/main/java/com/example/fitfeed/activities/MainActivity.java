@@ -2,6 +2,7 @@ package com.example.fitfeed.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ import com.example.fitfeed.models.Post;
 import com.example.fitfeed.fragments.FeedFragment;
 import com.example.fitfeed.fragments.ProfileFragment;
 import com.example.fitfeed.fragments.WorkoutsFragment;
+import com.example.fitfeed.util.CloudinaryHelper;
 import com.example.fitfeed.util.GsonHelper;
 import com.example.fitfeed.util.ResourceHelpers;
 import com.example.fitfeed.util.APIManager;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView titleBarTextView;
     private LinearLayoutManager postsLayoutManager;
     private ArrayList<Post> posts;
+
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +77,24 @@ public class MainActivity extends AppCompatActivity {
         // set default state if no saved state
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.mainFragmentContainer, FeedFragment.class, null).commit();
-            ArrayList<Post> postList = getPosts();
-            if (postList.isEmpty()) { restorePostsState(createPlaceholderPosts()); }
-            else {
-                restorePostsState(postList);
+            FeedFragment fragment = (FeedFragment)currentFragment;
+            if (fragment != null) {
+                ArrayList<Post> postList = fragment.getPostsList();
+                if (postList != null) {
+                    posts = postList;
+                }
             }
+            //ArrayList<Post> postList = getPosts();
+            /*if (fragment != null) {
+                ArrayList<Post> postList = fragment.getPostsList();
+                if (postList != null) {
+                    if (postList.isEmpty()) {
+                        //restorePostsState(createPlaceholderPosts());
+                    } else {
+                        restorePostsState(postList);
+                    }
+                }
+            }*/
         }
         bottomNavigationView.setSelectedItemId(R.id.nav_bar_feed);
         bottomNavigationView.setOnItemSelectedListener(this::onNavigationItemSelected);
@@ -87,23 +104,26 @@ public class MainActivity extends AppCompatActivity {
      * Builds a list of placeholders for initial app demo state.
      * @return List of {@link Post} placeholders.
      */
-    private List<Post> createPlaceholderPosts() {
+    /*private List<Post> createPlaceholderPosts() {
         Post post1 = new Post(
                 "Your friend just hit a PB in a set!",
                 "holtster2000",
                 ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder1).toString(),
+                null,
                 null
         );
         Post post2 = new Post(
                 "You became friends with Josh!",
                 "holtster2000",
                 ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder2).toString(),
+                null,
                 null
         );
         Post post3 = new Post(
                 "Josh shared his new workout plan with you",
                 "holtster2000",
                 ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder3).toString(),
+                null,
                 null
         );
 
@@ -113,16 +133,16 @@ public class MainActivity extends AppCompatActivity {
         list.add(post3);
 
         return list;
-    }
+    }*/
 
     /**
      * Helper to handle an uninitialized post list.
      * @return {@link ArrayList} of {@link Post} objects.
      */
     public ArrayList<Post> getPosts() {
-        //return (this.posts != null) ? this.posts : new ArrayList<>();
-        APIManager.setupTestPosts();
-        return APIManager.GetWorkoutPosts();
+        return (this.posts != null) ? this.posts : new ArrayList<>();
+        //APIManager.setupTestPosts();
+        //return APIManager.GetWorkoutPosts();
         //return APIManager.getPosts("fitfeed-admin");
     }
 
@@ -199,6 +219,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         transaction.commit();
+        currentFragment = fragment;
+        //Log.e("FRAGMENT CHANGE", "Fragment changed to " + itemId);
         setTitleBarText(item.getItemId());
 
         return true;
