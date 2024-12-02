@@ -40,8 +40,8 @@ public class APIManager {
 
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();  // Use a single-thread executor for simplicity
 
-    //static final String API_URL = "http://api.fitfeed.online:8081";
-    static final String API_URL = "http://10.0.2.2:8081";
+    static final String API_URL = "http://api.fitfeed.online:8081";
+    //static final String API_URL = "http://10.0.2.2:8081";
     static final String LOGIN_ENDPOINT = "/login";
     static final String REGISTER_ENDPOINT = "/register";
     static final String ADD_WORKOUT_ENDPOINT = "/workout";
