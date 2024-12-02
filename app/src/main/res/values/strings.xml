@@ -69,4 +69,9 @@
     <string name="username_already_in_use">Email or username already in use</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
     <string name="missing_required_field">Missing required field</string>
+    <string-array name="emoji_options">
+        <item>💪</item> <!-- Arm emoji -->
+        <item>🦵</item> <!-- Leg emoji -->
+        <item>🏃</item> <!-- Running emoji -->
+    </string-array>
 </resources>

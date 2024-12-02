@@ -10,6 +10,7 @@ public class Workout {
     private List<Exercise> exercises = new ArrayList<>();
     private long timestamp;
     private String workoutName;
+    private String emoji; // Add the emoji field
 
     public Workout() {}
 
@@ -35,6 +36,15 @@ public class Workout {
 
     public String getWorkoutName() {
         return workoutName;
+    }
+
+    // Getter and setter for the emoji
+    public void setEmoji(String emoji) {
+        this.emoji = emoji;
+    }
+
+    public String getEmoji() {
+        return emoji == null ? "" : emoji;
     }
 
     /**
