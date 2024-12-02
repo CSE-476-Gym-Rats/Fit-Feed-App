@@ -57,6 +57,15 @@ dependencies {
     // Testing Navigation
     androidTestImplementation(libs.navigation.testing)
 
+    // Cloudinary
+    implementation(libs.cloudinary.android)
+    implementation(libs.cloudinary.android.download)
+    implementation(libs.cloudinary.android.preprocess)
+
+    // Glide
+    implementation(libs.glide)
+    annotationProcessor (libs.compiler)
+
     implementation(libs.gson)
 
     implementation(libs.appcompat)

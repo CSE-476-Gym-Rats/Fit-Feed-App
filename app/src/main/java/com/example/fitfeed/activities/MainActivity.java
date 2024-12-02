@@ -19,6 +19,7 @@ import com.example.fitfeed.models.Post;
 import com.example.fitfeed.fragments.FeedFragment;
 import com.example.fitfeed.fragments.ProfileFragment;
 import com.example.fitfeed.fragments.WorkoutsFragment;
+import com.example.fitfeed.util.CloudinaryHelper;
 import com.example.fitfeed.util.GsonHelper;
 import com.example.fitfeed.util.ResourceHelpers;
 import com.example.fitfeed.util.APIManager;
@@ -108,18 +109,21 @@ public class MainActivity extends AppCompatActivity {
                 "Your friend just hit a PB in a set!",
                 "holtster2000",
                 ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder1).toString(),
+                null,
                 null
         );
         Post post2 = new Post(
                 "You became friends with Josh!",
                 "holtster2000",
                 ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder2).toString(),
+                null,
                 null
         );
         Post post3 = new Post(
                 "Josh shared his new workout plan with you",
                 "holtster2000",
                 ResourceHelpers.getUriToResource(getResources(), R.drawable.placeholder3).toString(),
+                null,
                 null
         );
 

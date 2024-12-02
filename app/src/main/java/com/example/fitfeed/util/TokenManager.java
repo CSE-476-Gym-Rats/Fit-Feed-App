@@ -35,7 +35,7 @@ public class TokenManager {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (Exception e) {
-            Log.e("TAG", "Error getting token: " + e.getMessage());;
+            Log.e("TAG", "Error getting token: " + e.getMessage());
         }
     }
 

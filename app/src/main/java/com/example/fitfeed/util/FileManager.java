@@ -9,12 +9,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,7 @@ import java.util.List;
  */
 public class FileManager {
     static final String WORKOUTS_FILE_NAME = "workouts.json";
+    static final String IMAGE_FILE_DIR = "images/";
 
     private FileManager() {}
 
@@ -87,6 +91,25 @@ public class FileManager {
         } catch (Exception e) {
             Log.e("FileManager", e.toString());
             throw e;
+        }
+    }
+
+    private static void writeImage(Context context, String filename, String existingFilename) {
+        File filesDir = context.getFilesDir();
+        File imagesDir = new File(filesDir, IMAGE_FILE_DIR);
+
+        try (FileInputStream fis = new FileInputStream(existingFilename)) {
+            try (FileOutputStream fos = new FileOutputStream(new File(imagesDir, filename))) {
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = fis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+            } catch (Exception e) {
+
+            }
+        } catch (Exception e) {
+
         }
     }
 }

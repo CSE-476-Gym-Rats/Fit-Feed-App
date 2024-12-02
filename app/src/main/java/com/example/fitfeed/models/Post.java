@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.fitfeed.FitFeedApp;
+import com.example.fitfeed.models.dto.PostDto;
 import com.example.fitfeed.util.GsonHelper;
 import com.google.gson.Gson;
 
@@ -23,6 +24,7 @@ public class Post implements Parcelable {
     private String postText;
     private String postUser;
     private String postFilename;
+    private String postImageUrl;
     private Workout postWorkout;
     //private UUID postUserID;
     private transient Drawable postDrawable;
@@ -33,7 +35,7 @@ public class Post implements Parcelable {
      * @param postUser {@link String} representing the username of the user associated with the post.
      */
     public Post(String postText, String postUser) {
-        this(postText, postUser, null, null);
+        this(postText, postUser, null, null, null);
     }
 
     /**
@@ -42,12 +44,14 @@ public class Post implements Parcelable {
      * @param postText {@link String} representing the body text of the post.
      * @param postUser {@link String} representing the username of the user associated with the post.
      * @param postFilename {@link String} filename of the image or resource for the post.
+     * @param postImageUrl {@link String} public url of the image resource for the post.
      * @param postWorkout {@link Workout} object associated with the post.
      */
-    public Post(String postText, String postUser, String postFilename, Workout postWorkout) {
+    public Post(String postText, String postUser, String postFilename, String postImageUrl, Workout postWorkout) {
         this.postText = postText;
         this.postUser = postUser;
         this.setPostFilename(postFilename);
+        this.postImageUrl = postImageUrl;
         this.postWorkout = postWorkout;
     }
 
@@ -55,6 +59,7 @@ public class Post implements Parcelable {
         this.postText = in.readString();
         this.postUser = in.readString();
         this.setPostFilename(in.readString());
+        this.postImageUrl = in.readString();
         this.postWorkout = GsonHelper.getGson().fromJson(in.readString(), Workout.class);
     }
 
@@ -69,6 +74,10 @@ public class Post implements Parcelable {
             return new Post[size];
         }
     };
+
+    public String getPostImageUrl() {
+        return postImageUrl;
+    }
 
     public Drawable getPostDrawable() {
         return postDrawable;
@@ -117,6 +126,10 @@ public class Post implements Parcelable {
         }
     }
 
+    public void setPostImageUrl(String postImageUrl) {
+        this.postImageUrl = postImageUrl;
+    }
+
     public void setPostFilename(File file) {
         this.setPostFilename(file.getAbsolutePath());
     }
@@ -144,6 +157,16 @@ public class Post implements Parcelable {
         dest.writeString(this.postText);
         dest.writeString(this.postUser);
         dest.writeString(this.postFilename);
+        dest.writeString(this.postImageUrl);
         dest.writeString(GsonHelper.getGson().toJson(this.postWorkout));
+    }
+
+    public static Post fromDto(PostDto dto) {
+        return new Post(
+                dto.postText,
+                dto.userId.toString(),
+                null,
+                dto.imageUri,
+                (dto.workout != null) ? Workout.fromDto(dto.workout) : null);
     }
 }
