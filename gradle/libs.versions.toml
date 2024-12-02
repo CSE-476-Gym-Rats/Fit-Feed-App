@@ -1,5 +1,6 @@
 [versions]
 #noinspection AndroidGradlePluginVersion
+
 agp = "8.6.1"
 cloudinaryAndroid = "3.0.2"
 compiler = "4.14.2"

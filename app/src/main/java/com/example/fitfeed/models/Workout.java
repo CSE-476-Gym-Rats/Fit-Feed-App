@@ -1,8 +1,9 @@
 package com.example.fitfeed.models;
 
-import com.google.gson.annotations.SerializedName;
 import com.example.fitfeed.models.dto.ExerciseDto;
 import com.example.fitfeed.models.dto.WorkoutDto;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
