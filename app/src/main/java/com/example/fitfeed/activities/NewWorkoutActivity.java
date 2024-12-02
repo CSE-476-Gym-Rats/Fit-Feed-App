@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.fitfeed.R;
 import com.example.fitfeed.R.string;
 import com.example.fitfeed.models.Workout;
+import com.example.fitfeed.util.APIManager;
 import com.example.fitfeed.util.FileManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -179,10 +180,42 @@ public class NewWorkoutActivity extends AppCompatActivity {
             FileManager.saveWorkout(this, workout);
             Toast.makeText(this, getString(string.workout_saved_successfully), Toast.LENGTH_SHORT).show();
 
+            // Save workout to API
+            APIManager.addWorkout(workout, this , success -> {
+                switch (success) {
+                    case -1: {
+                        NewWorkoutActivity.this.newWorkoutError();
+                        break;
+                    }
+                    case 0: {
+                        NewWorkoutActivity.this.newWorkoutFail();
+                        break;
+                    }
+                    case 1: {
+                        NewWorkoutActivity.this.newWorkoutSuccess();
+                        break;
+                    }
+                }
+            });
+
         } catch (Exception e) {
             Log.e("NewWorkoutActivity", e.toString());
             Toast.makeText(this, getString(string.error_saving_workout) + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         finish();
+    }
+
+    private void newWorkoutSuccess() {
+        Log.e("NewWorkoutActivity", "Success");
+    }
+
+    private void newWorkoutFail() {
+        Log.e("NewWorkoutActivity", "Fail");
+
+    }
+
+    private void newWorkoutError() {
+        Log.e("NewWorkoutActivity", "Error");
+
     }
 }

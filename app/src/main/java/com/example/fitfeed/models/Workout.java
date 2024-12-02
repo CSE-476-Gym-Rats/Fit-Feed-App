@@ -1,5 +1,10 @@
 package com.example.fitfeed.models;
 
+import com.example.fitfeed.models.dto.ExerciseDto;
+import com.example.fitfeed.models.dto.WorkoutDto;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,10 +13,17 @@ import java.util.List;
  */
 public class Workout {
     private List<Exercise> exercises = new ArrayList<>();
+    @SerializedName("workoutTimestamp")
     private long timestamp;
     private String workoutName;
 
     public Workout() {}
+
+    public Workout(List<Exercise> exercises, long timestamp, String workoutName) {
+        this.exercises = exercises;
+        this.timestamp = timestamp;
+        this.workoutName = workoutName;
+    }
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
@@ -41,6 +53,7 @@ public class Workout {
      * Class to model an individual exercise
      */
     public static class Exercise {
+        @SerializedName("exerciseName")
         private String name;
         private int sets;
         private int reps;
@@ -70,5 +83,19 @@ public class Workout {
         public float getWeight() {
             return weight;
         }
+
+        public static Exercise fromDto(ExerciseDto dto) {
+            return new Exercise(dto.exerciseName, dto.sets, dto.reps, dto.weight);
+        }
+    }
+
+    public static Workout fromDto(WorkoutDto dto) {
+        ArrayList<Exercise> exercises = new ArrayList<>();
+        if (dto.exercises != null) {
+            dto.exercises.forEach(exerciseDto -> {
+                exercises.add(Exercise.fromDto(exerciseDto));
+            });
+        }
+        return new Workout(exercises, dto.workoutTimestamp, dto.workoutName);
     }
 }

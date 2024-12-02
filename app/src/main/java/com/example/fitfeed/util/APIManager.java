@@ -1,5 +1,6 @@
 package com.example.fitfeed.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
@@ -13,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -20,6 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.UUID;
 
 import com.example.fitfeed.models.Post;
+import com.example.fitfeed.models.Workout;
+import com.example.fitfeed.models.dto.PostDto;
 import com.google.gson.Gson;
 
 /**
@@ -30,6 +34,7 @@ public class APIManager {
 
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();  // Use a single-thread executor for simplicity
 
+    static final String API_URL = "http://api.fitfeed.online:8081";
     //static final String API_URL = "http://10.0.2.2:8081";
     static final String LOGIN_ENDPOINT = "/login";
     static final String REGISTER_ENDPOINT = "/register";
@@ -38,7 +43,6 @@ public class APIManager {
     static final String MAKE_POST_ENDPOINT = "/post";
     static final String GET_POST_ENDPOINT = "/posts";
     static final String ADD_FRIEND_ENDPOINT = "/friend";
-    static final String API_URL = "http://api.fitfeed.online:8081";
 
     static final UUID TEST_USER_ID = UUID.fromString("5d72bb37-a696-450e-b5f4-fd9dd06c5a33");
 
@@ -63,7 +67,7 @@ public class APIManager {
                 // Create JSON payload
                 String jsonInputString = String.format("{\"username\": \"%s\", \"password\": \"%s\"}", username, password);
                 conn.setDoOutput(true);
-                conn.getOutputStream().write(jsonInputString.getBytes("UTF-8"));
+                conn.getOutputStream().write(jsonInputString.getBytes(StandardCharsets.UTF_8));
 
                 int responseCode = conn.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -139,7 +143,7 @@ public class APIManager {
 
                 conn.setDoOutput(true);
                 try (OutputStream os = conn.getOutputStream()) {
-                    os.write(payload.toString().getBytes("UTF-8"));
+                    os.write(payload.toString().getBytes(StandardCharsets.UTF_8));
                 }
 
                 int responseCode = conn.getResponseCode();
@@ -210,8 +214,13 @@ public class APIManager {
      */
     private static List<Post> parsePosts(String json) {
         Gson gson = new Gson();
-        Post[] posts = gson.fromJson(json, Post[].class);
-        ArrayList<Post> result = new ArrayList<>(List.of(posts));
+        PostDto[] posts = gson.fromJson(json, PostDto[].class);
+        ArrayList<Post> result = new ArrayList<>();
+        if (posts != null) {
+            for (PostDto post : posts) {
+                result.add(Post.fromDto(post));
+            }
+        }
         return result;
     }
 
@@ -237,10 +246,10 @@ public class APIManager {
                 //StringBuilder postsJson = new StringBuilder();
 
                 String jsonInputString = String.format("{\"usedId\": \"%s\", \"postText\": \"%s\", \"workoutId\": \"%d\", \"imageUri\": \"%s\"}",
-                        "TestUser1", post.getPostText(), 1L, "workout placeholder");
+                        "TestUser1", post.getPostText(), 1L, post.getPostImageUrl());
 
                 conn.setDoOutput(true);
-                conn.getOutputStream().write(jsonInputString.getBytes("UTF-8"));
+                conn.getOutputStream().write(jsonInputString.getBytes(StandardCharsets.UTF_8));
                 int responseCode = conn.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
                     statusCode = 1;
@@ -264,68 +273,6 @@ public class APIManager {
         void onAddFriendResult(int statusCode);
     }
 
-    /**
-     * Add a friend
-     * @param username
-     * @param friend_username
-     * @param callback - callback to handle the response code
-     */
-//    public static void AddFriend(String username, String friend_username, AddFriendCallback callback) {
-//        executorService.submit(() -> {
-//            int statusCode = 0; // Default to failure
-//
-//            try {
-//                URL url = new URL(API_URL + ADD_FRIEND_ENDPOINT);
-//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//                conn.setRequestMethod("POST");
-//                conn.setRequestProperty("Content-Type", "application/json");
-//
-//                // Include the Authorization header
-//                String accessToken = TokenManager.getAccessToken(); // Retrieve the token
-//                if (accessToken != null) {
-//                    conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-//                } else {
-//                    Log.e("AddFriendError", "Missing access token");
-//                    statusCode = -1; // Missing token
-//                    return;
-//                }
-//
-//                // Create JSON payload
-//                String jsonInputString = String.format("{\"username\": \"%s\", \"friendUsername\": \"%s\"}", username, friend_username);
-//                conn.setDoOutput(true);
-//                conn.getOutputStream().write(jsonInputString.getBytes("UTF-8"));
-//
-//                int responseCode = conn.getResponseCode();
-//                if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
-//                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//                    StringBuilder response = new StringBuilder();
-//                    String inputLine;
-//
-//                    while ((inputLine = in.readLine()) != null) {
-//                        response.append(inputLine);
-//                    }
-//                    in.close();
-//
-//                    // Process the response if needed; for now, we just set success status code
-//                    statusCode = 1;
-//                } else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-//                    Log.e("AddFriendError", "Unauthorized: Check your token or backend settings.");
-//                    statusCode = 0; // Indicate failure due to authentication issues
-//                }
-//
-//            } catch (Exception e) {
-//                Log.e("AddFriendError", "Failed to add friend: " + e.toString());
-//                statusCode = -1; // Connection error
-//            }
-//
-//            int finalStatusCode = statusCode;
-//            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-//                if (callback != null) {
-//                    callback.onAddFriendResult(finalStatusCode);
-//                }
-//            });
-//        });
-//    }
     /**
      * Add a friend
      * @param friend_username - The username of the friend to add

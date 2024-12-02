@@ -37,6 +37,7 @@ import com.google.android.libraries.places.api.net.SearchNearbyRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -234,7 +235,7 @@ public class GymSelectorMapsActivity extends FragmentActivity implements
     @SuppressLint("MissingPermission")
     private void findNearbyGyms(LatLng currentLocation, PlacesCallback callback) {
         final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.DISPLAY_NAME, Place.Field.LOCATION);
-        final List<String> includedTypes = Arrays.asList("gym");
+        final List<String> includedTypes = Collections.singletonList("gym");
         CircularBounds circle = CircularBounds.newInstance(currentLocation, 10000);
         final SearchNearbyRequest searchNearbyRequest =
                 SearchNearbyRequest.builder(circle, placeFields)
