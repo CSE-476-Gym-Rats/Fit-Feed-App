@@ -10,12 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -25,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.UUID;
 
 import com.example.fitfeed.models.Post;
+import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.models.dto.PostDto;
 import com.google.gson.Gson;
 
@@ -350,7 +348,7 @@ public class APIManager {
                 }
 
             } catch (Exception e) {
-                Log.e("TAG", e.toString());
+                Log.e("WORKOUTS: GET FAILED", e.toString());
                 statusCode = -1;
             }
 
