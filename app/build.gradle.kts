@@ -62,6 +62,10 @@ dependencies {
     implementation(libs.cloudinary.android.download)
     implementation(libs.cloudinary.android.preprocess)
 
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
     // Glide
     implementation(libs.glide)
     annotationProcessor (libs.compiler)
