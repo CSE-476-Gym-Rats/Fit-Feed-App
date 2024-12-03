@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,12 +28,33 @@ public class NewWorkoutActivity extends AppCompatActivity {
     private FloatingActionButton saveButton;
     private LinearLayout exerciseRows;
     private Workout workout = new Workout();
+    private String emoji;
+    private Spinner emojiSpinner;
+    public String getEmoji() {
+        return emoji;
+    }
+
+    public void setEmoji(String emoji) {
+        this.emoji = emoji;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_workout);
+        emojiSpinner = findViewById(R.id.emojiSpinner);
+        emojiSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                emoji = parent.getItemAtPosition(position).toString();
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                emoji = ""; // Default value if nothing is selected
+            }
+        });
         // Listener for addExerciseButton
         exerciseRows = findViewById(R.id.linearLayoutContainer);
         addExerciseButton = findViewById(R.id.addExerciseButton);
@@ -152,6 +175,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
             }
 
             workout.setWorkoutName(editWorkoutName.getText().toString());
+            workout.setEmoji(emoji); // Save emoji
 
             // Set workout timestamp
             long timestamp = System.currentTimeMillis();

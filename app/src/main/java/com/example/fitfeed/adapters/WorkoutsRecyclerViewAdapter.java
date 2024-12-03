@@ -14,6 +14,7 @@ import com.example.fitfeed.R;
 import com.example.fitfeed.models.Workout;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,7 +26,7 @@ public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutsRe
 
     public WorkoutsRecyclerViewAdapter(Context context, List<Workout> data) {
         this.inflater = LayoutInflater.from(context);
-        this.data = data;
+        this.data = (data != null) ? data : new ArrayList<>();
     }
 
     @NonNull
@@ -40,28 +41,38 @@ public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutsRe
         Workout workout = data.get(position);
 
         // Set workout name
-        holder.titleTextView.setText(workout.getWorkoutName());
+        holder.titleTextView.setText(workout.getWorkoutName() != null ? workout.getWorkoutName() : "Untitled Workout");
 
-        // Format the timestamp to a readable date and time format
-        String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-                .format(new Date(workout.getTimestamp()));
+        // Format and set the timestamp
+        String formattedDate = workout.getTimestamp() > 0
+                ? new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date(workout.getTimestamp()))
+                : "Unknown Date";
         holder.workoutDateTextView.setText(formattedDate);
 
-        // Clear previous exercises in case of reuse
-        holder.exerciseDetailsContainer.removeAllViews();
+        // Set emoji
+        holder.emojiTextView.setText(workout.getEmoji() != null ? workout.getEmoji() : "💪");
 
-        // Dynamically add each exercise detail as a TextView
-        for (Workout.Exercise exercise : workout.getExercises()) {
-            TextView exerciseDetail = new TextView(inflater.getContext());
-            exerciseDetail.setText(String.format(Locale.getDefault(),
-                    "%s: %d sets x %d reps at %.1f lbs",
-                    exercise.getName(), exercise.getSets(), exercise.getReps(), exercise.getWeight()));
-            exerciseDetail.setTextSize(14);
-            exerciseDetail.setPadding(8, 4, 8, 4); // Add padding around each exercise for spacing
-            exerciseDetail.setTextColor(inflater.getContext().getResources().getColor(R.color.navy));
-            holder.exerciseDetailsContainer.addView(exerciseDetail);
+        // Clear and dynamically add exercise details
+        holder.exerciseDetailsContainer.removeAllViews();
+        if (workout.getExercises() != null) {
+            for (Workout.Exercise exercise : workout.getExercises()) {
+                if (exercise != null) {
+                    TextView exerciseDetail = new TextView(inflater.getContext());
+                    exerciseDetail.setText(String.format(Locale.getDefault(),
+                            "%s: %d sets x %d reps at %.1f lbs",
+                            exercise.getName() != null ? exercise.getName() : "Unnamed Exercise",
+                            exercise.getSets(),
+                            exercise.getReps(),
+                            exercise.getWeight()));
+                    exerciseDetail.setTextSize(14);
+                    exerciseDetail.setPadding(8, 4, 8, 4);
+                    exerciseDetail.setTextColor(inflater.getContext().getResources().getColor(R.color.navy));
+                    holder.exerciseDetailsContainer.addView(exerciseDetail);
+                }
+            }
         }
     }
+
 
 
     @Override
@@ -72,12 +83,14 @@ public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutsRe
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         TextView workoutDateTextView;
+        TextView emojiTextView;
         LinearLayout exerciseDetailsContainer;
 
         ViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.workoutTextView);
             workoutDateTextView = itemView.findViewById(R.id.workoutDateTextView);
+            emojiTextView = itemView.findViewById(R.id.emojiTextView); // Add this
             exerciseDetailsContainer = itemView.findViewById(R.id.exerciseDetailsContainer);
         }
     }
