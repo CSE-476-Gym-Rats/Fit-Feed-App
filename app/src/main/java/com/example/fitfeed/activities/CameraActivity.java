@@ -269,11 +269,13 @@ public class CameraActivity extends AppCompatActivity {
             switch (success) {
                 case -1: {
                     Log.e("MakePost", "Error");
+                    Toast.makeText(CameraActivity.this, "Error uploading post.", Toast.LENGTH_SHORT).show();
                     break;
                 }
 
                 case 0: {
                     Log.e("MakePost", "Fail");
+                    Toast.makeText(CameraActivity.this, "Post failed to upload to server.", Toast.LENGTH_SHORT).show();
                     break;
                 }
 
