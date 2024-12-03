@@ -66,6 +66,9 @@ dependencies {
     implementation(libs.glide)
     annotationProcessor (libs.compiler)
 
+    // Apache Commons
+    implementation("commons-validator:commons-validator:1.9.0")
+
     implementation(libs.gson)
 
     implementation(libs.appcompat)
