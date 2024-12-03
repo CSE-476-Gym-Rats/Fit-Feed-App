@@ -62,9 +62,16 @@ dependencies {
     implementation(libs.cloudinary.android.download)
     implementation(libs.cloudinary.android.preprocess)
 
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
     // Glide
     implementation(libs.glide)
     annotationProcessor (libs.compiler)
+
+    // Apache Commons
+    implementation("commons-validator:commons-validator:1.9.0")
 
     implementation(libs.gson)
 

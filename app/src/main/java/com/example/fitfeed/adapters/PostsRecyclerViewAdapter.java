@@ -16,6 +16,8 @@ import com.example.fitfeed.R;
 import com.example.fitfeed.models.Post;
 import com.example.fitfeed.models.Workout;
 
+import org.apache.commons.validator.routines.UrlValidator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
 
     private ArrayList<Post> posts;
     private final LayoutInflater inflater;
+    private final UrlValidator urlValidator = new UrlValidator();
 
     public PostsRecyclerViewAdapter(Context context, List<Post> posts) {
         this.inflater = LayoutInflater.from(context);
@@ -64,15 +67,19 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         // set text and drawable for each post
+        holder.imageView.setVisibility(View.VISIBLE);
         holder.textView.setText(posts.get(position).getPostText());
-        if (posts.get(position).getPostImageUrl() != null) {
+        if (posts.get(position).getPostImageUrl() != null && urlValidator.isValid(posts.get(position).getPostImageUrl())) {
             Log.d("PostsRecyclerViewAdapter.onBindViewHolder", "Loading post image from url.");
             Glide.with(inflater.getContext())
                     .load(posts.get(position).getPostImageUrl())
+                    .centerCrop()
                     .into(holder.imageView);
-        } else {
+        } else if (posts.get(position).getPostDrawable() != null) {
             Log.d("PostsRecyclerViewAdapter.onBindViewHolder", "Loading post image from filename.");
             holder.imageView.setImageDrawable(posts.get(position).getPostDrawable());
+        } else {
+            holder.imageView.setVisibility(View.GONE);
         }
         Workout postWorkout = posts.get(position).getPostWorkout();
         if (postWorkout != null) {
@@ -89,7 +96,6 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
                 );
                 formattedText = formattedText + formattedExercise;
             }
-
             holder.textView2.setText(
                     /*String.format(
                             FitFeedApp.getContext().getResources().getString(R.string.post_workout_json_format),
