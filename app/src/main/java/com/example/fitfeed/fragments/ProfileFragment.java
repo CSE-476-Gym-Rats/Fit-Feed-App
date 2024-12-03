@@ -7,18 +7,26 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.fitfeed.R;
 import com.example.fitfeed.activities.FriendsActivity;
 import com.example.fitfeed.activities.GymSelectorMapsActivity;
+import com.example.fitfeed.adapters.WorkoutsRecyclerViewAdapter;
+import com.example.fitfeed.models.Workout;
+import com.example.fitfeed.util.APIManager;
+import com.example.fitfeed.util.FileManager;
 import com.example.fitfeed.util.TokenManager;
 import com.google.android.material.button.MaterialButton;
+
+import java.util.List;
 
 /**
  * Fragment for displaying the profile view
@@ -104,6 +112,7 @@ public class ProfileFragment extends Fragment {
         String username = TokenManager.getUsername();
         TextView usernameValue = getView().findViewById(R.id.username);
         usernameValue.setText(username);
+        updateProfileStats();
     }
 
     /**
@@ -122,4 +131,15 @@ public class ProfileFragment extends Fragment {
         homeGymValue.setText(homeGym);
     }
 
+    private void updateProfileStats() {
+        MutableLiveData<List<Workout>> workoutData = APIManager.GetWorkouts();
+        workoutData.observe(getViewLifecycleOwner(), workouts -> {
+            if(!workouts.isEmpty())
+            {
+                int workoutCount = workouts.size();
+                TextView workoutCountView = getView().findViewById(R.id.workoutsValue);
+                workoutCountView.setText(String.valueOf(workoutCount));
+            }
+        });
+    }
 }
