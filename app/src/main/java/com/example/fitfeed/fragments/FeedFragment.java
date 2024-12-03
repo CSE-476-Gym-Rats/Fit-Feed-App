@@ -174,7 +174,7 @@ public class FeedFragment extends Fragment {
 
     private void loadPosts() {
         MutableLiveData<List<Post>> liveData = APIManager.getPosts();
-        liveData.observe(getViewLifecycleOwner(), postsObserver ->{
+        liveData.observe(getViewLifecycleOwner(), postsObserver -> {
             if(!postsObserver.isEmpty())
             {
                 PostsRecyclerViewAdapter adapter = new PostsRecyclerViewAdapter(getContext(), postsObserver);

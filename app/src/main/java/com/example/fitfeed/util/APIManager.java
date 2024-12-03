@@ -41,7 +41,7 @@ public class APIManager {
     static final String ADD_WORKOUT_ENDPOINT = "/workout";
     static final String PULL_WORKOUTS_ENDPOINT = "/workouts";
     static final String MAKE_POST_ENDPOINT = "/post";
-    static final String GET_POST_ENDPOINT = "/posts";
+    static final String GET_POST_ENDPOINT = "/all-posts";
 
     static final UUID TEST_USER_ID = UUID.fromString("5d72bb37-a696-450e-b5f4-fd9dd06c5a33");
 
