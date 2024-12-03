@@ -17,6 +17,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.UUID;
@@ -24,7 +26,10 @@ import java.util.UUID;
 import com.example.fitfeed.models.Post;
 import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.models.dto.PostDto;
+import com.example.fitfeed.models.dto.WorkoutDto;
 import com.google.gson.Gson;
+
+import retrofit2.Response;
 
 /**
  * util for making API calls
@@ -41,7 +46,7 @@ public class APIManager {
     static final String ADD_WORKOUT_ENDPOINT = "/workout";
     static final String PULL_WORKOUTS_ENDPOINT = "/workouts";
     static final String MAKE_POST_ENDPOINT = "/post";
-    static final String GET_POST_ENDPOINT = "/posts";
+    static final String GET_POST_ENDPOINT = "/all-posts";
 
     static final UUID TEST_USER_ID = UUID.fromString("5d72bb37-a696-450e-b5f4-fd9dd06c5a33");
 
@@ -234,6 +239,24 @@ public class APIManager {
             int statusCode = 0;
 
             try {
+                // Get workout id first
+                String authHeader = "Bearer " + TokenManager.getAccessToken();
+                RetrofitService retrofitService = new RetrofitService();
+                FitFeedAPI api = retrofitService.getRetrofit().create(FitFeedAPI.class);
+                Response<List<WorkoutDto>> workouts = api.getWorkouts(authHeader).execute();
+
+                Long workoutId;
+                Optional<WorkoutDto> matchedWorkout = workouts.body().stream().filter(w -> {
+                    String dtoJson = GsonHelper.getGson().toJson(Workout.fromDto(w));
+                    String postJson = GsonHelper.getGson().toJson(post.getPostWorkout());
+                    return Objects.equals(dtoJson, postJson);
+                }).findFirst();
+                if (matchedWorkout.isPresent()) {
+                    workoutId = matchedWorkout.get().workoutId;
+                } else {
+                    throw new RuntimeException("No workout found!");
+                }
+
                 URL url = new URL(API_URL + MAKE_POST_ENDPOINT);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
@@ -245,7 +268,7 @@ public class APIManager {
                 //StringBuilder postsJson = new StringBuilder();
 
                 String jsonInputString = String.format("{\"usedId\": \"%s\", \"postText\": \"%s\", \"workoutId\": \"%d\", \"imageUri\": \"%s\"}",
-                        "TestUser1", post.getPostText(), 1L, post.getPostImageUrl());
+                        "TestUser1", post.getPostText(), workoutId, post.getPostImageUrl());
 
                 conn.setDoOutput(true);
                 conn.getOutputStream().write(jsonInputString.getBytes(StandardCharsets.UTF_8));

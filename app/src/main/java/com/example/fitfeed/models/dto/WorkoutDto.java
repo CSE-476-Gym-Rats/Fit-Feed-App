@@ -1,12 +1,13 @@
 package com.example.fitfeed.models.dto;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class WorkoutDto {
-    public int workoutId;
+    public long workoutId;
     public UUID userId;
     public String workoutName;
     public long workoutTimestamp;
-    public ArrayList<ExerciseDto> exercises;
+    public List<ExerciseDto> exercises;
 }
