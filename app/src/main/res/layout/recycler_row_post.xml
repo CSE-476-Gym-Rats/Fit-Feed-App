@@ -20,6 +20,27 @@
             app:tint="@color/navy" />
 
         <TextView
+            android:id="@+id/postUserTextView"
+            android:textColor="@color/navy"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/username_placeholder"
+            android:fontFamily="@font/instrument_sans"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:gravity="center_vertical"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_height="match_parent"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
             android:id="@+id/postTextView"
             android:textColor="@color/navy"
             android:layout_width="match_parent"
@@ -28,8 +49,9 @@
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:text="@string/post_placeholder"
+            android:fontFamily="@font/instrument_sans"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="normal" />
 
     </LinearLayout>
 
@@ -50,6 +72,7 @@
         android:layout_height="wrap_content"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:text="@string/post_placeholder" />
+        android:text="@string/post_placeholder"
+        android:fontFamily="@font/instrument_sans" />
 
 </LinearLayout>

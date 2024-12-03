@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="2"
         android:hint="@string/exercise_placeholder"
+        android:fontFamily="@font/instrument_sans"
         android:inputType="text" />
 
     <EditText
@@ -22,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:hint="@string/sets_placeholder"
+        android:fontFamily="@font/instrument_sans"
         android:inputType="number" />
 
     <EditText
@@ -32,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:hint="@string/reps_placeholder"
+        android:fontFamily="@font/instrument_sans"
         android:inputType="number" />
 
     <EditText
@@ -42,5 +45,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:hint="@string/weight_placeholder"
+        android:fontFamily="@font/instrument_sans"
         android:inputType="numberDecimal" />
 </LinearLayout>

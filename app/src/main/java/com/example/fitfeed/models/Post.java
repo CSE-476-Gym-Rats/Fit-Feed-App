@@ -164,7 +164,7 @@ public class Post implements Parcelable {
     public static Post fromDto(PostDto dto) {
         return new Post(
                 dto.postText,
-                dto.userId.toString(),
+                (dto.username != null) ? dto.username : dto.userId.toString(),
                 null,
                 dto.imageUri,
                 (dto.workout != null) ? Workout.fromDto(dto.workout) : null);

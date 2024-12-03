@@ -18,6 +18,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:fontFamily="@font/instrument_sans"
         android:layout_toEndOf="@+id/workoutsSpinnerImageView"
         android:gravity="center"
         android:text="@string/workout_name_placeholder"

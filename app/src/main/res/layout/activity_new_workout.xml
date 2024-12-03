@@ -40,6 +40,7 @@
         android:textColorHint="@color/navy"
         android:ems="10"
         android:hint="@string/workout_name_placeholder"
+        android:fontFamily="@font/instrument_sans"
         android:inputType="text"
         android:maxWidth="488dp"
         android:minHeight="48dp"
@@ -69,6 +70,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:text="@string/add_exercise_button"
+            android:fontFamily="@font/instrument_sans"
             app:backgroundTint="@color/dark_navy"/>
 
         <Button
