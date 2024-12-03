@@ -267,8 +267,10 @@ public class APIManager {
                 // Build exercise json string first
                 //StringBuilder postsJson = new StringBuilder();
 
-                String jsonInputString = String.format("{\"usedId\": \"%s\", \"postText\": \"%s\", \"workoutId\": \"%d\", \"imageUri\": \"%s\"}",
-                        "TestUser1", post.getPostText(), workoutId, post.getPostImageUrl());
+                String jsonInputString = String.format(
+                        "{\"postText\": \"%s\", \"workoutId\": \"%d\", \"imageUri\": \"%s\"}",
+                        post.getPostText(), workoutId, post.getPostImageUrl()
+                );
 
                 conn.setDoOutput(true);
                 conn.getOutputStream().write(jsonInputString.getBytes(StandardCharsets.UTF_8));
