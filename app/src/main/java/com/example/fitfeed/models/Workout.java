@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class to model an individual workout
@@ -49,6 +50,19 @@ public class Workout {
         return workoutName;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(exercises, timestamp, workoutName);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Workout)) return false;
+        Workout workout = (Workout) o;
+        return timestamp == workout.timestamp && Objects.equals(exercises, workout.exercises) && Objects.equals(workoutName, workout.workoutName);
+    }
+
     /**
      * Class to model an individual exercise
      */
@@ -86,6 +100,19 @@ public class Workout {
 
         public static Exercise fromDto(ExerciseDto dto) {
             return new Exercise(dto.exerciseName, dto.sets, dto.reps, dto.weight);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Exercise)) return false;
+            Exercise exercise = (Exercise) o;
+            return sets == exercise.sets && reps == exercise.reps && Float.compare(weight, exercise.weight) == 0 && Objects.equals(name, exercise.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, sets, reps, weight);
         }
     }
 
