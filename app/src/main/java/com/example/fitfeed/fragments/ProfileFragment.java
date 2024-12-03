@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import com.example.fitfeed.R;
 import com.example.fitfeed.activities.FriendsActivity;
 import com.example.fitfeed.activities.GymSelectorMapsActivity;
 import com.example.fitfeed.adapters.WorkoutsRecyclerViewAdapter;
+import com.example.fitfeed.models.Friend;
 import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.util.APIManager;
 import com.example.fitfeed.util.FileManager;
@@ -41,7 +43,7 @@ public class ProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private MaterialButton addFriendsButton;
+    private Button addFriendsButton;
     private ImageButton editHomeGymButton;
 
     public ProfileFragment() {
@@ -139,6 +141,17 @@ public class ProfileFragment extends Fragment {
                 int workoutCount = workouts.size();
                 TextView workoutCountView = getView().findViewById(R.id.workoutsValue);
                 workoutCountView.setText(String.valueOf(workoutCount));
+            }
+        });
+        MutableLiveData<List<Friend>> friendsData = APIManager.getFriends();
+        friendsData.observe(getViewLifecycleOwner(), friends -> {
+            if(!friends.isEmpty())
+            {
+                int friendsCount = friends.size();
+                TextView followersCountView = getView().findViewById(R.id.followersValue);
+                followersCountView.setText(String.valueOf(friendsCount));
+                TextView followingCountView = getView().findViewById(R.id.followingValue);
+                followingCountView.setText(String.valueOf(friendsCount));
             }
         });
     }
