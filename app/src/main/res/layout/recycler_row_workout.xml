@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:text="@string/workout_name_placeholder"
+            android:fontFamily="@font/instrument_sans"
             android:textSize="18sp"
             android:textColor="@color/navy"
             android:textStyle="bold"
@@ -43,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Date and Time"
+        android:fontFamily="@font/instrument_sans"
         android:textSize="14sp"
         android:textColor="@color/secondary_text"
         tools:text="2024-11-14 10:00 AM" />

@@ -185,12 +185,5 @@ public class FeedFragment extends Fragment {
                 Toast.makeText(getContext(), "Error loading posts.", Toast.LENGTH_SHORT).show();
             }
         });
-        /*try {
-            List<Workout> workouts = FileManager.loadWorkouts(getContext());
-            PostsRecyclerViewAdapter adapter = new PostsRecyclerViewAdapter(getContext(), posts);
-            recyclerView.setAdapter(adapter);
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "Error loading posts.", Toast.LENGTH_SHORT).show();
-        }*/
     }
 }
