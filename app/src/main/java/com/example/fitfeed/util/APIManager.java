@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -23,11 +24,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.UUID;
 
+import com.example.fitfeed.models.Friend;
 import com.example.fitfeed.models.Post;
 import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.models.dto.PostDto;
 import com.example.fitfeed.models.dto.WorkoutDto;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import retrofit2.Response;
 
@@ -387,7 +390,60 @@ public class APIManager {
         Gson gson = new Gson();
         Workout[] workouts = gson.fromJson(json, Workout[].class);
         ArrayList<Workout> result = new ArrayList<>(List.of(workouts));
-
         return result;
+    }
+
+    /**
+     * Get a list of friends data from the backend.
+     * @return List of Friend data.
+     */
+    public static MutableLiveData<List<Friend>> getFriends() {
+        MutableLiveData<List<Friend>> friendsData = new MutableLiveData<>();
+
+        executorService.submit(() -> {
+            int statusCode = 0;
+
+            try {
+                URL url = new URL(API_URL + "/friends"); // Replace with your endpoint
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
+
+                String userToken = TokenManager.getAccessToken();
+                conn.setRequestProperty("Authorization", "Bearer " + userToken);
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    String line;
+                    StringBuilder response = new StringBuilder();
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                    in.close();
+
+                    // Parse the JSON response
+                    String json = response.toString();
+                    List<Friend> friends = parseFriends(json);
+                    friendsData.postValue(friends);
+                    statusCode = 1;
+                }
+            } catch (Exception e) {
+                Log.e("FRIENDS: GET FAILED", e.toString());
+                statusCode = -1;
+            }
+        });
+        return friendsData;
+    }
+
+    /**
+     * Parse JSON string to a list of Friend objects.
+     * @param json JSON response as a string.
+     * @return List of Friend objects.
+     */
+    private static List<Friend> parseFriends(String json) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<Friend>>(){}.getType();
+        return gson.fromJson(json, listType);
     }
 }
