@@ -50,6 +50,7 @@ public class APIManager {
     static final String PULL_WORKOUTS_ENDPOINT = "/workouts";
     static final String MAKE_POST_ENDPOINT = "/post";
     static final String GET_POST_ENDPOINT = "/all-posts";
+    static final String ADD_FRIEND_ENDPOINT = "/friend";
 
     static final UUID TEST_USER_ID = UUID.fromString("5d72bb37-a696-450e-b5f4-fd9dd06c5a33");
 
@@ -394,6 +395,69 @@ public class APIManager {
     }
 
     /**
+     * Callback interface for handling add friend results
+     */
+    public interface AddFriendCallback {
+        void onAddFriendResult(int statusCode);
+    }
+
+    /**
+     * Add a friend
+     * @param friend_username - The username of the friend to add
+     * @param callback - Callback to handle the response code
+     */
+    public static void AddFriend(String username, String friend_username, AddFriendCallback callback) {
+        executorService.submit(() -> {
+            int statusCode = 0; // Default to failure
+
+            try {
+                URL url = new URL(API_URL + ADD_FRIEND_ENDPOINT);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+
+                // Include the Authorization header
+                String accessToken = TokenManager.getAccessToken();
+                if (accessToken != null) {
+                    conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+                } else {
+                    Log.e("AddFriendError", "Missing access token");
+                    statusCode = -1;
+                    return;
+                }
+
+                // Create JSON payload
+                String jsonInputString = String.format(
+                        "{\"username\": \"%s\", \"friendUsername\": \"%s\"}",
+                        username, friend_username
+                );
+                conn.setDoOutput(true);
+                conn.getOutputStream().write(jsonInputString.getBytes("UTF-8"));
+
+                // Handle response
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_CREATED) {
+                    statusCode = 1; // Success
+                } else if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    Log.e("AddFriendError", "Unauthorized: Check your token or backend settings.");
+                    statusCode = 0;
+                }
+
+            } catch (Exception e) {
+                Log.e("AddFriendError", "Failed to add friend: " + e.toString());
+                statusCode = -1;
+            }
+
+            int finalStatusCode = statusCode;
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                if (callback != null) {
+                    callback.onAddFriendResult(finalStatusCode);
+                }
+            });
+        });
+    }
+
+    /**
      * Get a list of friends data from the backend.
      * @return List of Friend data.
      */
@@ -446,4 +510,5 @@ public class APIManager {
         Type listType = new TypeToken<List<Friend>>(){}.getType();
         return gson.fromJson(json, listType);
     }
+
 }
