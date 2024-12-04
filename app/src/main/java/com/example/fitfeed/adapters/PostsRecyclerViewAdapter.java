@@ -18,6 +18,7 @@ import com.example.fitfeed.models.Workout;
 
 import org.apache.commons.validator.routines.UrlValidator;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
     private ArrayList<Post> posts;
     private final LayoutInflater inflater;
     private final UrlValidator urlValidator = new UrlValidator();
+    private final DecimalFormat weightFormat = new DecimalFormat("0.#");
 
     public PostsRecyclerViewAdapter(Context context, List<Post> posts) {
         this.inflater = LayoutInflater.from(context);
@@ -69,6 +71,7 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
         // set text and drawable for each post
         holder.imageView.setVisibility(View.VISIBLE);
         holder.textView.setText(posts.get(position).getPostText());
+        holder.textViewUsername.setText(posts.get(position).getPostUser());
         if (posts.get(position).getPostImageUrl() != null && urlValidator.isValid(posts.get(position).getPostImageUrl())) {
             Log.d("PostsRecyclerViewAdapter.onBindViewHolder", "Loading post image from url.");
             Glide.with(inflater.getContext())
@@ -88,11 +91,11 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
 
             for (Workout.Exercise exercise : exercises) {
                 String formattedExercise = String.format(
-                        "%s, %d sets, %d reps, weight: %f\n",
+                        "%s, %d sets, %d reps, weight: %s\n",
                         exercise.getName(),
                         exercise.getSets(),
                         exercise.getReps(),
-                        exercise.getWeight()
+                        weightFormat.format(exercise.getWeight())
                 );
                 formattedText = formattedText + formattedExercise;
             }
@@ -113,12 +116,14 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
+        TextView textViewUsername;
         ImageView imageView;
         TextView textView2;
 
         ViewHolder(View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.postTextView);
+            textViewUsername = itemView.findViewById(R.id.postUserTextView);
             imageView = itemView.findViewById(R.id.postImageView);
             textView2 = itemView.findViewById(R.id.postTextView2);
         }

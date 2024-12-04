@@ -1,5 +1,6 @@
 package com.example.fitfeed.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -11,13 +12,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.fitfeed.R;
+import com.example.fitfeed.activities.CameraActivity;
+import com.example.fitfeed.activities.FriendsActivity;
 import com.example.fitfeed.activities.NewWorkoutActivity;
 import com.example.fitfeed.adapters.WorkoutsRecyclerViewAdapter;
+import com.example.fitfeed.models.Post;
 import com.example.fitfeed.models.Workout;
 import com.example.fitfeed.util.APIManager;
 import com.example.fitfeed.util.FileManager;
@@ -33,7 +40,6 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class WorkoutsFragment extends Fragment {
-    private FloatingActionButton newWorkoutButton;
     private RecyclerView workoutRecyclerView;
 
     public WorkoutsFragment() {}
@@ -51,9 +57,29 @@ public class WorkoutsFragment extends Fragment {
         return fragment;
     }
 
+    /** @noinspection deprecation*/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    /** @noinspection deprecation*/
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.workout_menu, menu);
+    }
+
+    /** @noinspection deprecation*/
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.workoutMenuNewWorkout) {
+            Intent intent = new Intent(getContext(), NewWorkoutActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -73,13 +99,6 @@ public class WorkoutsFragment extends Fragment {
 
         // Load workouts and set adapter
         loadWorkouts();
-
-        // Listener for newWorkoutButton
-        newWorkoutButton = getView().findViewById(R.id.newWorkoutButton);
-        newWorkoutButton.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), NewWorkoutActivity.class);
-            startActivity(intent);
-        });
     }
 
     @Override
@@ -102,13 +121,5 @@ public class WorkoutsFragment extends Fragment {
                 Toast.makeText(getContext(), "Error loading workouts.", Toast.LENGTH_SHORT).show();
             }
         });
-
-        //try {
-        //    List<Workout> workouts = FileManager.loadWorkouts(getContext());
-        //    WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(getContext(), workouts);
-        //    workoutRecyclerView.setAdapter(adapter);
-        //} catch (Exception e) {
-        //    Toast.makeText(getContext(), "Error loading workouts.", Toast.LENGTH_SHORT).show();
-        // }
     }
 }
