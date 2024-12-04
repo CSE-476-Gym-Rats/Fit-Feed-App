@@ -335,6 +335,7 @@ public class APIManager {
 
         });
 
+        return liveData;
     }
 
     private static List<Workout> parseWorkouts(String json) {
